@@ -2,6 +2,7 @@ package ie.gmit.sw;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import org.encog.engine.network.activation.ActivationReLU;
 import org.encog.engine.network.activation.ActivationSigmoid;
@@ -49,22 +50,25 @@ public class NeuralNetwork {
 	 * You can normalize the data using the Utils class either before or after writing to 
 	 * or reading from the CSV file. 
 	 */
-	
 	private int inputs;
 	
+	private BasicNetwork network;
+	private MLDataSet trainingSet;
 	
 	// First attempt - 500 input nodes, Sigmoid activation functions (all), 250 nodes on hidden layer. Output has biases.
 	
 	public NeuralNetwork(int inputs) {
 		this.inputs = inputs;
-		
+	}
+	
+	public void startTraining() {	
 		//int inputs = 100; //Change this to the number of input neurons
 		int outputs = 235; //Change this to the number of output neurons
 		
 		int hiddenLayerNodes = 500;
 		
 		//Configure the neural network topology. 
-		BasicNetwork network = new BasicNetwork();
+		network = new BasicNetwork();
 		network.addLayer(new BasicLayer(new ActivationReLU(), true, this.inputs)); //You need to figure out the activation function
 		network.addLayer(new BasicLayer(new ActivationReLU(), true, hiddenLayerNodes));
 		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputs));
@@ -75,7 +79,7 @@ public class NeuralNetwork {
 		//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
 		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputs, outputs, false);
 		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
-		MLDataSet trainingSet = mdl.external2Memory();
+		trainingSet = mdl.external2Memory();
 		
 		FoldedDataSet folded = new FoldedDataSet(trainingSet);
 		MLTrain train = new ResilientPropagation(network, folded);
@@ -83,6 +87,8 @@ public class NeuralNetwork {
 
 		//Use backpropagation training with alpha=0.1 and momentum=0.2
 		//Backpropagation trainer = new Backpropagation(network, trainingSet, 0.1, 0.2);
+		
+		long startTime = System.nanoTime(); 
 		
 		System.out.println("Training started..\n");
 
@@ -92,21 +98,22 @@ public class NeuralNetwork {
 			cv.iteration(); 
 			epoch++;
 			
-			System.out.println("Epoch: " + epoch);
-			System.out.println("Error Rate: " + cv.getError());
+			//System.out.println("Epoch: " + epoch);
+			//System.out.println("Error Rate: " + cv.getError());
 		} while(cv.getError() > 0.008);
 		
 		cv.finishTraining();
-		System.out.println("Training complete " + epoch + " epocs with error of: " + cv.getError());
+		System.out.println("Training complete in " + epoch + " epocs with error of: " + cv.getError());
+		System.out.println("\nTraining completed in: " + (System.nanoTime() - startTime) + " nanoseconds");
 		
-		Utilities.saveNeuralNetwork(network, "./test.nn");
-		
+		// Ask the user if they want to save network.
+		saveNetwork();
+	}
+	
+	public void startTests() {
 		// Step 4: Test the NN
 		double correct = 0;
-		double truePositive = 0;
-		double trueNegative= 0;
-		double falsePositive = 0;
-		double falseNegative= 0;
+		double truePositive = 0, trueNegative= 0, falsePositive = 0, falseNegative= 0;
 		double total = 0;
 		
 		int countone = 0, countminusone = 0, countzero = 0;
@@ -146,11 +153,11 @@ public class NeuralNetwork {
 //			for (int i = 0; i < expected.length; i++) {
 //				System.out.print(expected[i] + " ");
 //			}
-			
-			//System.out.println(expected);
-			
-			//System.out.println("E: " + expected + " A: " + actual);
-			
+//			
+//			//System.out.println(expected);
+//			
+//			//System.out.println("E: " + expected + " A: " + actual);
+//			
 //			if(actual == 1)
 //				countone++;
 //			
@@ -181,16 +188,16 @@ public class NeuralNetwork {
 //            }
 		}
 		
-		// sensitivity (sn) = TP (TP + FN)
-		// specificity (sP) = TN / (TN + FP)
-		
-//		double sensitivity = truePositive * (truePositive + falseNegative);
-//		double specificity = trueNegative / (trueNegative + falsePositive);
-//		
+		//sensitivity (sn) = TP (TP + FN)
+		//specificity (sP) = TN / (TN + FP)
+				
+		//double sensitivity = truePositive * (truePositive + falseNegative);
+		//double specificity = trueNegative / (trueNegative + falsePositive);
+				
 		System.out.println("Testing complete. Acc=" + ((correct / total) * 100));
 		System.out.println("Total: 	 " + total);
 		System.out.println("Correct: " + correct);
-//		
+		
 //		System.out.println("\nTP: " + truePositive);
 //		System.out.println("TN: " + trueNegative);
 //		System.out.println("FP: " + falsePositive);
@@ -202,6 +209,33 @@ public class NeuralNetwork {
 //		System.out.println("1:  " + countone);
 //		System.out.println("-1:  " + countminusone);
 //		System.out.println("0:  " + countzero);
+	}
+	
+	private void saveNetwork() {
+		Scanner console = new Scanner(System.in);
+		boolean isValid;
+		
+		// Save
+		do {
+			System.out.println("\nWould you like to save the neural network:\n (1) Yes\n (2) No");
+			String option = console.nextLine();
+			
+			isValid = true;
+			
+			if (Integer.parseInt(option) == 1) {
+				// Save Network
+				System.out.println("Please enter the name of the Neural Network file (Extension is not required).");
+				String nnFilePath = console.nextLine();
+				
+				Utilities.saveNeuralNetwork(network, "./" + nnFilePath + ".nn");
+			} else if (Integer.parseInt(option) == 2) {
+				isValid = false;
+			} else {
+				System.out.println("Invalid option, please try again.");
+			} 
+		} while (isValid);
+		
+		console.close();
 	}
 	
 	private int getMaxIndex(double[] input) {
