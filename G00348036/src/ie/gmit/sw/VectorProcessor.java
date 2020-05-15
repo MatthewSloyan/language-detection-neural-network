@@ -9,36 +9,50 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class VectorProcessor {
-	private double[] vector = new double[100];
+
+	private int n;
+	private double[] vector;
 	private DecimalFormat df = new DecimalFormat("###.###");
-	private int n = 4;
 	private Language[] langs = Language.values();
 	private FileWriter fw;
 	
-	public void go() throws Exception {
+	public VectorProcessor(int vectorInput, int n) {
+		super();
+		this.vector = new double[vectorInput];
+		this.n = n;
+	}
+	
+	public void processFile() throws Exception {
 		
 		try {
+			// Read in Wili Text file.
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					new FileInputStream(new File("./wili-2018-Small-11750-Edited.txt"))));
-					
-			fw = new FileWriter("./data.csv");
+			
+			if (!br.ready()) {
+				System.out.println("Error occured: Please make sure the Wili text file is in the same directory.");
+			}
+			else {
+				// Create new file to write CSV data to.
+				fw = new FileWriter("./data.csv");
 
-			String line = null;
-			while((line = br.readLine()) != null) {
-				process(line);
-				// Track total
+				String line = null;
+				while((line = br.readLine()) != null) {
+					// Process data.
+					processLine(line);
+					// Track total
+				}
+				
+				// Close Wili and 
+				br.close();
+				fw.close();
 			}
 			
-			br.close();
-			fw.close();
-			
 		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
 		}
 	}
 	
-	private void process(String line) throws Exception{
+	private void processLine(String line) throws Exception{
 
 		try {
 			String[] record = line.split("@");
@@ -58,7 +72,7 @@ public class VectorProcessor {
 				vector[index]++;
 			}
 			
-			vector = Utilities.normalize(vector, -1, 1);
+			vector = Utilities.normalize(vector, 0, 1);
 			
 			for (int i = 0; i < vector.length; i++) {
 				fw.append(df.format(vector[i]));

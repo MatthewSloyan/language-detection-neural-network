@@ -5,14 +5,16 @@ import java.util.Scanner;
 public class Runner {
 	public static void main(String[] args){
 		
+		int inputs = 1000;
+		
 		try {
-			new VectorProcessor().go();
+			new VectorProcessor(inputs, 4).processFile();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		new NeuralNetwork();
+		new NeuralNetwork(inputs);
 		
 //		Scanner s = new Scanner(System.in);
 //		while (keepRunning) {

@@ -1,8 +1,11 @@
 package ie.gmit.sw;
 
 import java.io.File;
+import java.util.Arrays;
 
+import org.encog.engine.network.activation.ActivationReLU;
 import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.engine.network.activation.ActivationSoftMax;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
@@ -47,18 +50,24 @@ public class NeuralNetwork {
 	 * or reading from the CSV file. 
 	 */
 	
+	private int inputs;
+	
 	
 	// First attempt - 500 input nodes, Sigmoid activation functions (all), 250 nodes on hidden layer. Output has biases.
 	
-	public NeuralNetwork() {
-		int inputs = 100; //Change this to the number of input neurons
+	public NeuralNetwork(int inputs) {
+		this.inputs = inputs;
+		
+		//int inputs = 100; //Change this to the number of input neurons
 		int outputs = 235; //Change this to the number of output neurons
+		
+		int hiddenLayerNodes = 500;
 		
 		//Configure the neural network topology. 
 		BasicNetwork network = new BasicNetwork();
-		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputs)); //You need to figure out the activation function
-		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 50));
-		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, outputs));
+		network.addLayer(new BasicLayer(new ActivationReLU(), true, this.inputs)); //You need to figure out the activation function
+		network.addLayer(new BasicLayer(new ActivationReLU(), true, hiddenLayerNodes));
+		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputs));
 		network.getStructure().finalizeStructure();
 		network.reset();
 		//network.reset(1000);
@@ -82,7 +91,10 @@ public class NeuralNetwork {
 		do { 
 			cv.iteration(); 
 			epoch++;
-		} while(cv.getError() > 0.01);
+			
+			System.out.println("Epoch: " + epoch);
+			System.out.println("Error Rate: " + cv.getError());
+		} while(cv.getError() > 0.008);
 		
 		cv.finishTraining();
 		System.out.println("Training complete " + epoch + " epocs with error of: " + cv.getError());
@@ -104,61 +116,102 @@ public class NeuralNetwork {
 			
 			MLData output = network.compute(pair.getInput());
 			
-			int actual = (int) output.getData(0);
-			int expected = (int) pair.getIdeal().getData(0);
+			double[] expected = output.getData();
+			int expectedIndex = getMaxIndex(expected);
+				
+			double[] actual = pair.getIdeal().getData();
+			int actualIndex = getMaxIndex(actual);
+			
+			if (expectedIndex == actualIndex) {
+				correct++;
+			}
+			
+			//int test = (int) output.getData(0); 
+			
+			//System.out.println(output.getData(1));
+			
+			//System.out.println(indexOfMax);
+			
+			//double max = Arrays.stream(actual).max().getAsDouble();
+			//System.out.println("Max = " + max);
+			
+			//System.out.println(actual);
+			
+			
+//			for (int i = 0; i < actual.length; i++) {
+//				System.out.print(actual[i] + " ");
+//			}
+//			System.out.println();
+//			
+//			for (int i = 0; i < expected.length; i++) {
+//				System.out.print(expected[i] + " ");
+//			}
+			
+			//System.out.println(expected);
 			
 			//System.out.println("E: " + expected + " A: " + actual);
 			
-			if(actual == 1)
-				countone++;
-			
-			if(actual == -1)
-				countminusone++;
-			
-			if(actual == 0)
-				countzero++;
-			
-			if(actual > 0){
-                if(actual == expected){
-                    truePositive++;
-                    correct++;
-                }
-                else{
-                    falseNegative++;
-                }
-            }
-			
-            if(actual <= 0){
-                if(actual == expected){
-                    trueNegative++;
-                    correct++;
-                }
-                else{
-                    falsePositive++;
-                }
-            }
+//			if(actual == 1)
+//				countone++;
+//			
+//			if(actual == -1)
+//				countminusone++;
+//			
+//			if(actual == 0)
+//				countzero++;
+//			
+//			if(actual > 0){
+//                if(actual == expected){
+//                    truePositive++;
+//                    correct++;
+//                }
+//                else{
+//                    falseNegative++;
+//                }
+//            }
+//			
+//            if(actual <= 0){
+//                if(actual == expected){
+//                    trueNegative++;
+//                    correct++;
+//                }
+//                else{
+//                    falsePositive++;
+//                }
+//            }
 		}
 		
 		// sensitivity (sn) = TP (TP + FN)
 		// specificity (sP) = TN / (TN + FP)
 		
-		double sensitivity = truePositive * (truePositive + falseNegative);
-		double specificity = trueNegative / (trueNegative + falsePositive);
-		
+//		double sensitivity = truePositive * (truePositive + falseNegative);
+//		double specificity = trueNegative / (trueNegative + falsePositive);
+//		
 		System.out.println("Testing complete. Acc=" + ((correct / total) * 100));
 		System.out.println("Total: 	 " + total);
 		System.out.println("Correct: " + correct);
+//		
+//		System.out.println("\nTP: " + truePositive);
+//		System.out.println("TN: " + trueNegative);
+//		System.out.println("FP: " + falsePositive);
+//		System.out.println("FN: " + falseNegative);
+//		
+//		System.out.println("\nSensitivity (sn): " + sensitivity);
+//		System.out.println("Specificity (sP): " + specificity);
+//		
+//		System.out.println("1:  " + countone);
+//		System.out.println("-1:  " + countminusone);
+//		System.out.println("0:  " + countzero);
+	}
+	
+	private int getMaxIndex(double[] input) {
+		int indexOfMax = 0;
 		
-		System.out.println("\nTP: " + truePositive);
-		System.out.println("TN: " + trueNegative);
-		System.out.println("FP: " + falsePositive);
-		System.out.println("FN: " + falseNegative);
-		
-		System.out.println("\nSensitivity (sn): " + sensitivity);
-		System.out.println("Specificity (sP): " + specificity);
-		
-		System.out.println("1:  " + countone);
-		System.out.println("-1:  " + countminusone);
-		System.out.println("0:  " + countzero);
+		for (int i = 0; i < input.length; i++){
+		   if (input[i] > input[indexOfMax]) {
+			   indexOfMax = i;
+		   }
+		}
+		return indexOfMax;
 	}
 }
