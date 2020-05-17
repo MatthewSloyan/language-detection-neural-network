@@ -3,6 +3,7 @@ package ie.gmit.sw;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import org.encog.engine.network.activation.ActivationReLU;
 import org.encog.engine.network.activation.ActivationSigmoid;
@@ -10,6 +11,7 @@ import org.encog.engine.network.activation.ActivationSoftMax;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
+import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.buffer.MemoryDataLoader;
 import org.encog.ml.data.buffer.codec.CSVDataCODEC;
 import org.encog.ml.data.buffer.codec.DataSetCODEC;
@@ -65,7 +67,7 @@ public class NeuralNetwork {
 		//int inputs = 100; //Change this to the number of input neurons
 		int outputs = 235; //Change this to the number of output neurons
 		
-		int hiddenLayerNodes = 500;
+		int hiddenLayerNodes = 250;
 		
 		//Configure the neural network topology. 
 		network = new BasicNetwork();
@@ -104,7 +106,7 @@ public class NeuralNetwork {
 		
 		cv.finishTraining();
 		System.out.println("Training complete in " + epoch + " epocs with error of: " + cv.getError());
-		System.out.println("\nTraining completed in: " + (System.nanoTime() - startTime) + " nanoseconds");
+		System.out.println("\nTraining completed in: " + TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS) + " seconds.");
 		
 		// Ask the user if they want to save network.
 		saveNetwork();
@@ -218,7 +220,7 @@ public class NeuralNetwork {
 		// Save
 		do {
 			System.out.println("\nWould you like to save the neural network:\n (1) Yes\n (2) No");
-			String option = console.nextLine();
+			String option = console.next();
 			
 			isValid = true;
 			
@@ -228,14 +230,14 @@ public class NeuralNetwork {
 				String nnFilePath = console.nextLine();
 				
 				Utilities.saveNeuralNetwork(network, "./" + nnFilePath + ".nn");
+				
+				isValid = false;
 			} else if (Integer.parseInt(option) == 2) {
 				isValid = false;
 			} else {
 				System.out.println("Invalid option, please try again.");
 			} 
 		} while (isValid);
-		
-		console.close();
 	}
 	
 	private int getMaxIndex(double[] input) {
@@ -247,5 +249,27 @@ public class NeuralNetwork {
 		   }
 		}
 		return indexOfMax;
+	}
+
+	public String predict(double[] vector) {
+		
+		// Set up data and pass in variables.
+		MLData input = new BasicMLData(vector.length);
+		
+		for (int i = 0; i < vector.length; i++) {
+			input.setData(i, vector[i]);
+		}
+		
+		MLData output = network.compute(input);
+		
+		double[] expected = output.getData();
+		
+		int actualIndex = getMaxIndex(expected);
+		
+		return Language.values()[actualIndex].toString();
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }

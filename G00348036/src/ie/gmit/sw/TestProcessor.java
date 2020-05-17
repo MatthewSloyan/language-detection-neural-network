@@ -3,6 +3,7 @@ package ie.gmit.sw;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
@@ -22,26 +23,25 @@ public class TestProcessor {
 		return vector;
 	}
 	
-    public void processFile(String filePath) {
+    public void processFile(File file) {
 		
 		try {
-			// Read in Wili Text file.
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					new FileInputStream(new File(filePath))));
+			// Read in File
+			//BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
+			BufferedReader br = new BufferedReader(new FileReader(file)); 
 			
-			if (!br.ready()) {
-				System.out.println("Error occured: File not found");
+			System.out.println("Test");
+			
+			String line = null;
+			while((line = br.readLine()) != null) {
+				System.out.println(line);
+				processLine(line);
 			}
-			else {
-				String line = null;
-				while((line = br.readLine()) != null) {
-					processLine(line);
-				}
-				
-				br.close();
-			}
+			
+			br.close();
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 	
@@ -51,10 +51,11 @@ public class TestProcessor {
 			line = line.toUpperCase();
 			
 			// Initialise vector to 0;
-			for (int i = 0; i < vector.length; i++) vector[i] = 0;
+			//for (int i = 0; i < vector.length; i++) vector[i] = 0;
 			
 			for (int i = 0; i < line.length() - n; i += n) {
 				CharSequence kmer = line.substring(i, i + n);
+				System.out.println(kmer);
 				int index = kmer.hashCode() % vector.length;
 				vector[index]++;
 			}

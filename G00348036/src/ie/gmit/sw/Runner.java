@@ -1,20 +1,25 @@
 package ie.gmit.sw;
 
+import java.io.IOException;
 import java.util.Scanner;
+
+import ie.gmit.sw.UI.Menu;
 
 public class Runner {
 	public static void main(String[] args){
 		
-		int inputs = 1000;
+//		int inputs = 1000;
+//		
+//		try {
+//			new VectorProcessor(inputs, 4).processFile();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		new NeuralNetwork(inputs);
 		
-		try {
-			new VectorProcessor(inputs, 4).processFile();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		new NeuralNetwork(inputs);
+		new Menu().show();
 		
 //		Scanner s = new Scanner(System.in);
 //		while (keepRunning) {

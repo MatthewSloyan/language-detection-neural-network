@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Scanner;
 
 import ie.gmit.sw.NeuralNetwork;
+import ie.gmit.sw.TestProcessor;
 import ie.gmit.sw.Utilities;
 import ie.gmit.sw.VectorProcessor;
 
@@ -31,14 +32,18 @@ public class CreateMenu {
             String kmerInput = console.next();
             
             isValid = true;
-            kmers = Integer.parseInt(kmerInput);
-            
-            if (kmers < 1 || kmers > 4) {
-            	System.out.println("Invalid selection, kmers must be between 1 and 4. Please try again");
-            }
-            else {
-            	System.out.println("Input must be numbers. Please try again.");
-            }
+            try {
+                kmers = Integer.parseInt(kmerInput);
+                
+                if (kmers < 1 || kmers > 4) {
+                	System.out.println("Invalid selection, kmers must be between 1 and 4. Please try again.");
+                }
+                else {
+                	isValid = false;
+                }
+			} catch (Exception e) {
+				System.out.println("Input must be numbers. Please try again.");
+			}
 		} while (isValid);
 		
 		do
@@ -47,30 +52,39 @@ public class CreateMenu {
             String vectorInput = console.next();
             
             isValid = true;
-            vectorSize = Integer.parseInt(vectorInput);
-            
-            if (vectorSize < 100 || vectorSize > 2000) {
-            	System.out.println("Invalid selection, size must be between 100 and 2000. Please try again");
-            }
-            else {
-            	System.out.println("Input must be numbers. Please try again.");
-            }
+            try {
+                vectorSize = Integer.parseInt(vectorInput);
+                
+                if (vectorSize < 100 || vectorSize > 2000) {
+                	System.out.println("Invalid selection, size must be between 100 and 2000. Please try again");
+                }
+                else {
+                	isValid = false;
+                }
+			} catch (Exception e) {
+				System.out.println("Input must be numbers. Please try again.");
+			}
 		} while (isValid);
 		
-		new VectorProcessor(vectorSize, kmers);
+		try {
+			new VectorProcessor(vectorSize, kmers).processFile();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		nn = new NeuralNetwork(vectorSize);
 		nn.startTraining();
 		
 		// Menu
 		do {
-			System.out.println("\nPlease select an option:\n "
+			System.out.println("\nPlease select an option:\n"
 					+ "(1) View Topology Structure\n "
 					+ "(2) View Accuracy & Run Tests\n"
 					+ "(3) Predict Language from String Input\n"
 					+ "(4) Predict Language from File\n"
 					+ "(5) Return to main menu.");
-			String option = console.nextLine();
+			String option = console.next();
 			
 			isValid = true;
 			
@@ -100,26 +114,57 @@ public class CreateMenu {
 	}
 
 	private void predictLanguageString() {
-		System.out.println("Please paragraph or sample of language you would like to predict.");
+		console.nextLine();
+		
+		System.out.println("Please enter paragraph or sample of language you would like to predict.");
 		String userInput = console.nextLine();
 		
+		TestProcessor processor = new TestProcessor(vectorSize, kmers);
+		
+		try {
+			processor.processLine(userInput);
+		} catch (Exception e) {
+			System.out.println("Error occured processing string. Please try again.");
+		}
+		
+		String prediction = nn.predict(processor.getVector());
+	
+		System.out.println("The Predicted language is: " + prediction);
 	}
 
 	private void predictLanguageFile() {
+		//console.nextLine();
+		
+		File f;
+		
 		do {
 			System.out.println("Please enter path to text file for prediction.");
 			String predictionFilePath = console.nextLine();
 
-			File f = new File(predictionFilePath);
+			f = new File(predictionFilePath);
 			isValid = true;
 		
 			//check if file exists, keeps asking till it is valid
 			if (f.exists()) {
 				isValid = false;
+				
+				TestProcessor processor = new TestProcessor(vectorSize, kmers);
+				
+				processor.processFile(f);
+				
+				String prediction = nn.predict(processor.getVector());
+			
+				System.out.println("The Predicted language is: " + prediction);
 			} else {
 				System.out.println("File does not exist, please try again.");
 			}
 		} while (isValid);
+		
+//		System.out.println("Please enter path to text file for prediction.");
+//		predictionFilePath = console.next();
+		
+		//System.out.println("Your file path: " + predictionFilePath);
+		
 		
 	}
 }
