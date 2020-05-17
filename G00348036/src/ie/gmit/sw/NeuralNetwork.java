@@ -66,22 +66,32 @@ public class NeuralNetwork {
 	public void startTraining() {	
 		//int inputs = 100; //Change this to the number of input neurons
 		int outputs = 235; //Change this to the number of output neurons
+		double scalingFactor = 0.015;
 		
-		int hiddenLayerNodes = 250;
-		
-		//Configure the neural network topology. 
-		network = new BasicNetwork();
-		network.addLayer(new BasicLayer(new ActivationReLU(), true, this.inputs)); //You need to figure out the activation function
-		network.addLayer(new BasicLayer(new ActivationReLU(), true, hiddenLayerNodes));
-		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputs));
-		network.getStructure().finalizeStructure();
-		network.reset();
-		//network.reset(1000);
-
 		//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
 		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputs, outputs, false);
 		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
 		trainingSet = mdl.external2Memory();
+		
+		//int hiddenLayerNodes = 500;
+		
+		// Calculations
+		//int hiddenLayerNodes = inputs + outputs;
+		//int hiddenLayerNodes = (inputs * 0.66) + outputs;
+		//int hiddenLayerNodes = (inputs * 0.66) + outputs;
+		//int hiddenLayerNodes = (int) Math.sqrt(inputs * outputs);
+		int hiddenLayerNodes = (int) (11750 / (scalingFactor * (inputs + outputs)));
+		
+		System.out.println(hiddenLayerNodes);
+		
+		//Configure the neural network topology. 
+		network = new BasicNetwork();
+		network.addLayer(new BasicLayer(new ActivationReLU(), true, inputs)); //You need to figure out the activation function
+		network.addLayer(new BasicLayer(new ActivationReLU(), true, hiddenLayerNodes));
+		network.addLayer(new BasicLayer(new ActivationSoftMax(), true, outputs));
+		network.getStructure().finalizeStructure();
+		network.reset();
+		//network.reset(1000);
 		
 		FoldedDataSet folded = new FoldedDataSet(trainingSet);
 		MLTrain train = new ResilientPropagation(network, folded);
@@ -102,7 +112,7 @@ public class NeuralNetwork {
 			
 			//System.out.println("Epoch: " + epoch);
 			//System.out.println("Error Rate: " + cv.getError());
-		} while(cv.getError() > 0.008);
+		} while(cv.getError() > 0.005);
 		
 		cv.finishTraining();
 		System.out.println("Training complete in " + epoch + " epocs with error of: " + cv.getError());
@@ -213,7 +223,7 @@ public class NeuralNetwork {
 //		System.out.println("0:  " + countzero);
 	}
 	
-	private void saveNetwork() {
+	public void saveNetwork() {
 		Scanner console = new Scanner(System.in);
 		boolean isValid;
 		
@@ -238,6 +248,11 @@ public class NeuralNetwork {
 				System.out.println("Invalid option, please try again.");
 			} 
 		} while (isValid);
+	}
+	
+	public void loadNetwork(String fileName) {
+		
+		network = Utilities.loadNeuralNetwork(fileName);
 	}
 	
 	private int getMaxIndex(double[] input) {
@@ -270,6 +285,17 @@ public class NeuralNetwork {
 	}
 	
 	public static void main(String[] args) {
+		int inputs = 1000;
 		
+		try {
+			new VectorProcessor(inputs, 4).processFile();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		NeuralNetwork nn = new NeuralNetwork(inputs);
+		nn.startTraining();
+		nn.startTests();
 	}
 }

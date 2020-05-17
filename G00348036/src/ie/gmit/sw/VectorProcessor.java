@@ -59,7 +59,7 @@ public class VectorProcessor {
 			
 			if (record.length > 2) return; // Any bad lines of text.
 			
-			String text = record[0].toUpperCase();
+			String text = record[0].toLowerCase();
 			String lang = record[1];
 			
 			// Initialise vector to 0;

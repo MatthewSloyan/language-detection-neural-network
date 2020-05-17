@@ -30,7 +30,7 @@ public class TestProcessor {
 			//BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
 			BufferedReader br = new BufferedReader(new FileReader(file)); 
 			
-			System.out.println("Test");
+			//System.out.println("Test");
 			
 			String line = null;
 			while((line = br.readLine()) != null) {
@@ -48,14 +48,14 @@ public class TestProcessor {
 	public void processLine(String line) throws Exception{
 
 		try {
-			line = line.toUpperCase();
+			line = line.toLowerCase();
 			
 			// Initialise vector to 0;
 			//for (int i = 0; i < vector.length; i++) vector[i] = 0;
 			
 			for (int i = 0; i < line.length() - n; i += n) {
 				CharSequence kmer = line.substring(i, i + n);
-				System.out.println(kmer);
+				//System.out.println(kmer);
 				int index = kmer.hashCode() % vector.length;
 				vector[index]++;
 			}
