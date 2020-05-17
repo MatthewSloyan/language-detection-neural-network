@@ -22,6 +22,8 @@ import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.cross.CrossValidationKFold;
 import org.encog.neural.networks.training.propagation.back.Backpropagation;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.encog.neural.prune.PruneIncremental;
+import org.encog.neural.prune.PruneSelective;
 import org.encog.util.csv.CSVFormat;
 
 public class NeuralNetwork {
@@ -78,9 +80,8 @@ public class NeuralNetwork {
 		// Calculations
 		//int hiddenLayerNodes = inputs + outputs;
 		//int hiddenLayerNodes = (inputs * 0.66) + outputs;
-		//int hiddenLayerNodes = (inputs * 0.66) + outputs;
-		//int hiddenLayerNodes = (int) Math.sqrt(inputs * outputs);
-		int hiddenLayerNodes = (int) (11750 / (scalingFactor * (inputs + outputs)));
+		int hiddenLayerNodes = (int) Math.sqrt(inputs * outputs);
+		//int hiddenLayerNodes = (int) (11750 / (scalingFactor * (inputs + outputs)));
 		
 		System.out.println(hiddenLayerNodes);
 		
@@ -96,6 +97,9 @@ public class NeuralNetwork {
 		FoldedDataSet folded = new FoldedDataSet(trainingSet);
 		MLTrain train = new ResilientPropagation(network, folded);
 		CrossValidationKFold cv = new CrossValidationKFold(train, 5);
+		
+		//PruneSelective p = new PruneSelective(network);
+		//p.prune(0, 1);
 
 		//Use backpropagation training with alpha=0.1 and momentum=0.2
 		//Backpropagation trainer = new Backpropagation(network, trainingSet, 0.1, 0.2);
@@ -105,14 +109,15 @@ public class NeuralNetwork {
 		System.out.println("Training started..\n");
 
 		//Train the neural network
+		double minError = 0.005;
 		int epoch = 1; //Use this to track the number of epochs
 		do { 
 			cv.iteration(); 
 			epoch++;
 			
-			//System.out.println("Epoch: " + epoch);
-			//System.out.println("Error Rate: " + cv.getError());
-		} while(cv.getError() > 0.005);
+			System.out.println("Epoch: " + epoch);
+			System.out.println("Error Rate: " + cv.getError());
+		} while(cv.getError() > minError);
 		
 		cv.finishTraining();
 		System.out.println("Training complete in " + epoch + " epocs with error of: " + cv.getError());
@@ -128,7 +133,7 @@ public class NeuralNetwork {
 		double truePositive = 0, trueNegative= 0, falsePositive = 0, falseNegative= 0;
 		double total = 0;
 		
-		int countone = 0, countminusone = 0, countzero = 0;
+		//int countone = 0, countminusone = 0, countzero = 0;
 		
 		for (MLDataPair pair : trainingSet) {
 			total++;
@@ -143,6 +148,27 @@ public class NeuralNetwork {
 			
 			if (expectedIndex == actualIndex) {
 				correct++;
+			}
+			
+			int y = (int) Math.round(output.getData(0));
+			int yd = (int) pair.getIdeal().getData(0);
+			
+			if(y == 1){
+				if(y == yd){
+					truePositive++;
+				}
+				else{
+					falseNegative++;
+				}
+			}
+			
+			if(y == 0){
+				if(y == yd){
+					trueNegative++;
+				}
+				else{
+					falsePositive++;
+				}
 			}
 			
 			//int test = (int) output.getData(0); 
@@ -203,20 +229,20 @@ public class NeuralNetwork {
 		//sensitivity (sn) = TP (TP + FN)
 		//specificity (sP) = TN / (TN + FP)
 				
-		//double sensitivity = truePositive * (truePositive + falseNegative);
-		//double specificity = trueNegative / (trueNegative + falsePositive);
+		double sensitivity = truePositive * (truePositive + falseNegative);
+		double specificity = trueNegative / (trueNegative + falsePositive);
 				
 		System.out.println("Testing complete. Acc=" + ((correct / total) * 100));
 		System.out.println("Total: 	 " + total);
 		System.out.println("Correct: " + correct);
 		
-//		System.out.println("\nTP: " + truePositive);
-//		System.out.println("TN: " + trueNegative);
-//		System.out.println("FP: " + falsePositive);
-//		System.out.println("FN: " + falseNegative);
-//		
-//		System.out.println("\nSensitivity (sn): " + sensitivity);
-//		System.out.println("Specificity (sP): " + specificity);
+		System.out.println("\nTP: " + truePositive);
+		System.out.println("TN: " + trueNegative);
+		System.out.println("FP: " + falsePositive);
+		System.out.println("FN: " + falseNegative);
+		
+		System.out.println("\nSensitivity (sn): " + sensitivity);
+		System.out.println("Specificity (sP): " + specificity);
 //		
 //		System.out.println("1:  " + countone);
 //		System.out.println("-1:  " + countminusone);
@@ -288,7 +314,7 @@ public class NeuralNetwork {
 		int inputs = 1000;
 		
 		try {
-			new VectorProcessor(inputs, 4).processFile();
+			new VectorProcessor(inputs, 3).processFile();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

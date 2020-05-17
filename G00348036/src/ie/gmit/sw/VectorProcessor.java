@@ -72,6 +72,15 @@ public class VectorProcessor {
 				vector[index]++;
 			}
 			
+			// 3 and 4 kmers
+//			for (int i = 1; i <= 4; i++) {
+//				for (int j = 0; j < text.length() - i; j += i) {
+//					CharSequence kmer = text.substring(j, j + i);
+//					int index = kmer.hashCode() % vector.length;
+//					vector[index]++;
+//				}
+//			}
+			
 			vector = Utilities.normalize(vector, 0, 1);
 			
 			for (int i = 0; i < vector.length; i++) {
