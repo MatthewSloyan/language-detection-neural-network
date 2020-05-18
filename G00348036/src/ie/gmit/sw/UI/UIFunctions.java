@@ -51,7 +51,6 @@ public class UIFunctions {
 	public void loadNetwork() {
 		boolean isValid;
 		
-		console.nextLine();
 		do {
 			System.out.println("Please enter path to Neural Network file.");
 			String nnFilePath = console.next();

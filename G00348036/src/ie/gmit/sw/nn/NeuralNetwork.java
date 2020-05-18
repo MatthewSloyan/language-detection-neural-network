@@ -35,9 +35,12 @@ import ie.gmit.sw.processor.TrainingProcessor;
 
 public class NeuralNetwork {
 
-	private int inputSize;
 	private BasicNetwork network;
 	private MLDataSet trainingSet;
+	
+	private int inputSize;
+	private int hiddenLayerSize;
+	private int outputSize = 235; // Output layer node size (235 languages in training set).
 	
 	private final static NeuralNetwork instance = new NeuralNetwork();
 	
@@ -65,27 +68,25 @@ public class NeuralNetwork {
 	}
 
 	public void startTraining() {	
-		// Output number (235 languages in training set).
-		int outputs = 235; 
-		
 		// Calculations
 		//int hiddenLayerNodes = new HiddenLayerCalculator().CalculationOne(inputSize, outputs);
 		//int hiddenLayerNodes = new HiddenLayerCalculator().CalculationTwo(inputSize, outputs);
 		//int hiddenLayerNodes = new HiddenLayerCalculator().UpperBoundScaling(inputSize, outputs);
 		
-		int hiddenLayerNodes = new HiddenLayerCalculator().GeometricPyramidRule(inputSize, outputs);
-		System.out.println(hiddenLayerNodes);
+		// Choosen calculation (Geometric Pyramid Rule)
+		hiddenLayerSize = new HiddenLayerCalculator().GeometricPyramidRule(inputSize, outputSize);
+		System.out.println(hiddenLayerSize);
 		
 		//Configure the neural network topology. 
 		network = new BasicNetwork();
 		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputSize, 0.8));
-		network.addLayer(new BasicLayer(new ActivationTANH(), true, hiddenLayerNodes, 0.8));
-		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputs, 0.8));
+		network.addLayer(new BasicLayer(new ActivationTANH(), true, hiddenLayerSize, 0.8));
+		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputSize, 0.8));
 		network.getStructure().finalizeStructure();
 		network.reset();
 		
 		//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
-		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputSize, outputs, false);
+		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputSize, outputSize, false);
 		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
 		trainingSet = mdl.external2Memory();
 		
@@ -137,8 +138,8 @@ public class NeuralNetwork {
 			int expectedIndex = getMaxIndex(expected);
 				
 			double[] actual = pair.getIdeal().getData();
-			int actualIndex = getResult(actual);
-			
+			int actualIndex = getMaxIndex(actual);
+		
 			if (expectedIndex == actualIndex) {
 				correct++;
 			}
@@ -245,8 +246,12 @@ public class NeuralNetwork {
 	}
 	
 	public void viewTopology() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("\n==== Network Topology ==== \n");
+		System.out.println("Number of layers: 3");
+		System.out.println("Layer 1: Input Layer using a Sigmoid Activation Function with " + inputSize + " nodes.");
+		System.out.println("Layer 2: Hidden Layer using a TanH Activation Function with " + hiddenLayerSize + " nodes.");
+		System.out.println("Layer 3: Output Layer using a Softmax Activation Function with " + outputSize + " nodes.");
+		System.out.println("\nAll layers have a Drop Out Rate of 0.8 and contain biases.");
 	}
 	
 	private int getMaxIndex(double[] input) {
@@ -260,18 +265,6 @@ public class NeuralNetwork {
 		return indexOfMax;
 	}
 	
-	private int getResult(double[] input) {
-		int indexOfMax = 0;
-		
-		for (int i = 0; i < input.length; i++){
-		   if (input[i] == 1) {
-			   indexOfMax = i;
-			   break;
-		   }
-		}
-		return indexOfMax;
-	}
-
 	public String predict(double[] vector) {
 		
 		// Set up data and pass in variables.
@@ -301,6 +294,7 @@ public class NeuralNetwork {
 		}
 		
 		NeuralNetwork nn = NeuralNetwork.getInstance();
+		nn.setInputSize(inputs);
 		nn.startTraining();
 		nn.startTests();
 	}

@@ -6,7 +6,7 @@ public class MainMenu {
 	private String text = "Please select an option:\n (1) Create new Neural Network\n (2) Load Existing Neural Network\n (3) Exit Program";
 	boolean keepRunning = true;
 	
-	public void show() {
+	public void display() {
 		System.out.println("====== Language Detection Application ====== ");
  		
  		//Running time: O(N);

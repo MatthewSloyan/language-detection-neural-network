@@ -15,9 +15,11 @@ public class LoadMenu {
 	public void display() {
 		
 		UIFunctions ui = new UIFunctions();
+		
+		ui.loadNetwork();
+		
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
-		ui.loadNetwork();
 		
 		// Menu
 		do {
