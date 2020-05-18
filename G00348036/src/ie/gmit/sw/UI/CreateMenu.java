@@ -133,13 +133,13 @@ public class CreateMenu {
 	}
 
 	private void predictLanguageFile() {
-		//console.nextLine();
+		console.nextLine();
 		
 		File f;
 		
 		do {
 			System.out.println("Please enter path to text file for prediction.");
-			String predictionFilePath = console.nextLine();
+			String predictionFilePath = console.next();
 
 			f = new File(predictionFilePath);
 			isValid = true;
@@ -156,6 +156,7 @@ public class CreateMenu {
 			
 				System.out.println("The Predicted language is: " + prediction);
 			} else {
+				console.nextLine();
 				System.out.println("File does not exist, please try again.");
 			}
 		} while (isValid);
@@ -164,7 +165,6 @@ public class CreateMenu {
 //		predictionFilePath = console.next();
 		
 		//System.out.println("Your file path: " + predictionFilePath);
-		
 		
 	}
 }

@@ -1,6 +1,9 @@
 package ie.gmit.sw;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -8,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.encog.engine.network.activation.ActivationReLU;
 import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.engine.network.activation.ActivationSoftMax;
+import org.encog.engine.network.activation.ActivationTANH;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
@@ -79,7 +83,7 @@ public class NeuralNetwork {
 		
 		// Calculations
 		//int hiddenLayerNodes = inputs + outputs;
-		//int hiddenLayerNodes = (inputs * 0.66) + outputs;
+		//int hiddenLayerNodes = (int) ((inputs * 0.66) + outputs);
 		int hiddenLayerNodes = (int) Math.sqrt(inputs * outputs);
 		//int hiddenLayerNodes = (int) (11750 / (scalingFactor * (inputs + outputs)));
 		
@@ -87,8 +91,8 @@ public class NeuralNetwork {
 		
 		//Configure the neural network topology. 
 		network = new BasicNetwork();
-		network.addLayer(new BasicLayer(new ActivationReLU(), true, inputs)); //You need to figure out the activation function
-		network.addLayer(new BasicLayer(new ActivationReLU(), true, hiddenLayerNodes));
+		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputs));
+		network.addLayer(new BasicLayer(new ActivationTANH(), true, hiddenLayerNodes));
 		network.addLayer(new BasicLayer(new ActivationSoftMax(), true, outputs));
 		network.getStructure().finalizeStructure();
 		network.reset();
@@ -109,7 +113,7 @@ public class NeuralNetwork {
 		System.out.println("Training started..\n");
 
 		//Train the neural network
-		double minError = 0.005;
+		double minError = 0.002;
 		int epoch = 1; //Use this to track the number of epochs
 		do { 
 			cv.iteration(); 
@@ -124,7 +128,7 @@ public class NeuralNetwork {
 		System.out.println("\nTraining completed in: " + TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS) + " seconds.");
 		
 		// Ask the user if they want to save network.
-		saveNetwork();
+		//saveNetwork();
 	}
 	
 	public void startTests() {
@@ -135,6 +139,14 @@ public class NeuralNetwork {
 		
 		//int countone = 0, countminusone = 0, countzero = 0;
 		
+		// Create new file to write CSV data to.
+//		DecimalFormat df = new DecimalFormat("###.###");
+//		FileWriter fw = null;
+//		try {
+//			fw = new FileWriter("./test.csv");
+//		} catch (IOException e1) {
+//		}
+		
 		for (MLDataPair pair : trainingSet) {
 			total++;
 			
@@ -144,14 +156,26 @@ public class NeuralNetwork {
 			int expectedIndex = getMaxIndex(expected);
 				
 			double[] actual = pair.getIdeal().getData();
-			int actualIndex = getMaxIndex(actual);
+			int actualIndex = getResult(actual);
 			
 			if (expectedIndex == actualIndex) {
 				correct++;
 			}
 			
+//			try {
+//				for (int i = 0; i < actual.length; i++) {
+//					fw.append(df.format(actual[i]));
+//		            fw.append(',');
+//				}
+//
+//				fw.append('\n');
+//			} catch (IOException e) {
+//			}
+			
 			int y = (int) Math.round(output.getData(0));
 			int yd = (int) pair.getIdeal().getData(0);
+			
+			//System.out.println(y + " " + yd);
 			
 			if(y == 1){
 				if(y == yd){
@@ -226,6 +250,13 @@ public class NeuralNetwork {
 //            }
 		}
 		
+//		try {
+//			fw.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		//sensitivity (sn) = TP (TP + FN)
 		//specificity (sP) = TN / (TN + FP)
 				
@@ -291,6 +322,18 @@ public class NeuralNetwork {
 		}
 		return indexOfMax;
 	}
+	
+	private int getResult(double[] input) {
+		int indexOfMax = 0;
+		
+		for (int i = 0; i < input.length; i++){
+		   if (input[i] == 1) {
+			   indexOfMax = i;
+			   break;
+		   }
+		}
+		return indexOfMax;
+	}
 
 	public String predict(double[] vector) {
 		
@@ -311,10 +354,10 @@ public class NeuralNetwork {
 	}
 	
 	public static void main(String[] args) {
-		int inputs = 1000;
+		int inputs = 650;
 		
 		try {
-			new VectorProcessor(inputs, 3).processFile();
+			new VectorProcessor(inputs, 2).processFile();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
