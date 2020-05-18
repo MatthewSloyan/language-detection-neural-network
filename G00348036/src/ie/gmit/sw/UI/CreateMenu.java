@@ -136,6 +136,7 @@ public class CreateMenu {
 		console.nextLine();
 		
 		File f;
+		boolean isValid;
 		
 		do {
 			System.out.println("Please enter path to text file for prediction.");
@@ -156,7 +157,6 @@ public class CreateMenu {
 			
 				System.out.println("The Predicted language is: " + prediction);
 			} else {
-				console.nextLine();
 				System.out.println("File does not exist, please try again.");
 			}
 		} while (isValid);

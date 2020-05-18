@@ -91,9 +91,9 @@ public class NeuralNetwork {
 		
 		//Configure the neural network topology. 
 		network = new BasicNetwork();
-		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputs));
-		network.addLayer(new BasicLayer(new ActivationTANH(), true, hiddenLayerNodes));
-		network.addLayer(new BasicLayer(new ActivationSoftMax(), true, outputs));
+		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputs, 0.8));
+		network.addLayer(new BasicLayer(new ActivationTANH(), true, hiddenLayerNodes, 0.8));
+		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputs, 0.8));
 		network.getStructure().finalizeStructure();
 		network.reset();
 		//network.reset(1000);
@@ -111,17 +111,19 @@ public class NeuralNetwork {
 		long startTime = System.nanoTime(); 
 		
 		System.out.println("Training started..\n");
+		
+		long start = System.currentTimeMillis();
+		long end = start + 120*1000; // 120 seconds * 1000 ms/sec
 
 		//Train the neural network
-		double minError = 0.002;
+		double minError = 0.0025;
 		int epoch = 1; //Use this to track the number of epochs
 		do { 
 			cv.iteration(); 
 			epoch++;
 			
-			System.out.println("Epoch: " + epoch);
-			System.out.println("Error Rate: " + cv.getError());
-		} while(cv.getError() > minError);
+			System.out.println("Epoch: " + epoch + " Error Rate: " + cv.getError());
+		} while(cv.getError() > minError && System.currentTimeMillis() < end);
 		
 		cv.finishTraining();
 		System.out.println("Training complete in " + epoch + " epocs with error of: " + cv.getError());
@@ -172,28 +174,28 @@ public class NeuralNetwork {
 //			} catch (IOException e) {
 //			}
 			
-			int y = (int) Math.round(output.getData(0));
-			int yd = (int) pair.getIdeal().getData(0);
-			
-			//System.out.println(y + " " + yd);
-			
-			if(y == 1){
-				if(y == yd){
-					truePositive++;
-				}
-				else{
-					falseNegative++;
-				}
-			}
-			
-			if(y == 0){
-				if(y == yd){
-					trueNegative++;
-				}
-				else{
-					falsePositive++;
-				}
-			}
+//			int y = (int) Math.round(output.getData(0));
+//			int yd = (int) pair.getIdeal().getData(0);
+//			
+//			//System.out.println(y + " " + yd);
+//			
+//			if(y == 1){
+//				if(y == yd){
+//					truePositive++;
+//				}
+//				else{
+//					falseNegative++;
+//				}
+//			}
+//			
+//			if(y == 0){
+//				if(y == yd){
+//					trueNegative++;
+//				}
+//				else{
+//					falsePositive++;
+//				}
+//			}
 			
 			//int test = (int) output.getData(0); 
 			
@@ -260,20 +262,20 @@ public class NeuralNetwork {
 		//sensitivity (sn) = TP (TP + FN)
 		//specificity (sP) = TN / (TN + FP)
 				
-		double sensitivity = truePositive * (truePositive + falseNegative);
-		double specificity = trueNegative / (trueNegative + falsePositive);
+//		double sensitivity = truePositive * (truePositive + falseNegative);
+//		double specificity = trueNegative / (trueNegative + falsePositive);
 				
 		System.out.println("Testing complete. Acc=" + ((correct / total) * 100));
 		System.out.println("Total: 	 " + total);
 		System.out.println("Correct: " + correct);
 		
-		System.out.println("\nTP: " + truePositive);
-		System.out.println("TN: " + trueNegative);
-		System.out.println("FP: " + falsePositive);
-		System.out.println("FN: " + falseNegative);
-		
-		System.out.println("\nSensitivity (sn): " + sensitivity);
-		System.out.println("Specificity (sP): " + specificity);
+//		System.out.println("\nTP: " + truePositive);
+//		System.out.println("TN: " + trueNegative);
+//		System.out.println("FP: " + falsePositive);
+//		System.out.println("FN: " + falseNegative);
+//		
+//		System.out.println("\nSensitivity (sn): " + sensitivity);
+//		System.out.println("Specificity (sP): " + specificity);
 //		
 //		System.out.println("1:  " + countone);
 //		System.out.println("-1:  " + countminusone);
@@ -354,7 +356,7 @@ public class NeuralNetwork {
 	}
 	
 	public static void main(String[] args) {
-		int inputs = 650;
+		int inputs = 500;
 		
 		try {
 			new VectorProcessor(inputs, 2).processFile();
