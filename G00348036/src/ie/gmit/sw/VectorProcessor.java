@@ -68,7 +68,6 @@ public class VectorProcessor {
 			for (int i = 0; i < text.length() - n; i += n) {
 				CharSequence kmer = text.substring(i, i + n);
 				int index = kmer.hashCode() % vector.length;
-				//System.out.println(kmer);
 				vector[index]++;
 			}
 			
@@ -88,13 +87,9 @@ public class VectorProcessor {
 	            fw.append(',');
 			}
 			
-			// Language
-			//int index = Arrays.asList(langs).indexOf(lang);
-			
 			// Get the index of the language 
 			// Adapted from: https://stackoverflow.com/questions/15436721/get-index-of-enum-from-string
 			int index = Language.valueOf(lang).ordinal();
-			//System.out.println(index);
 			
 			// Append 1 and 0s
 			for (int i = 0; i < langs.length; i++){
@@ -124,12 +119,5 @@ public class VectorProcessor {
 //				vector[index]++;
 //			}
 //		}
-		
-		
-		// write out the vector to a CSV file using df.format(number) for each vector index
-		// write out the language numbers to the same row in CSV file.
-	
-		// vector.length + #labels
 	}
-
 }

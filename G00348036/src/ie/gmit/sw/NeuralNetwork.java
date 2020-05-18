@@ -32,71 +32,60 @@ import org.encog.util.csv.CSVFormat;
 
 public class NeuralNetwork {
 
-	/*
-	 * *************************************************************************************
-	 * NB: READ THE FOLLOWING CAREFULLY AFTER COMPLETING THE TWO LABS ON ENCOG AND REVIEWING
-	 * THE LECTURES ON BACKPROPAGATION AND MULTI-LAYER NEURAL NETWORKS! YOUR SHOULD ALSO 
-	 * RESTRUCTURE THIS CLASS AS IT IS ONLY INTENDED TO DEMO THE ESSENTIALS TO YOU. 
-	 * *************************************************************************************
-	 * 
-	 * The following demonstrates how to configure an Encog Neural Network and train
-	 * it using backpropagation from data read from a CSV file. The CSV file should
-	 * be structured like a 2D array of doubles with input + output number of columns.
-	 * Assuming that the NN has two input neurons and two output neurons, then the CSV file
-	 * should be structured like the following:
-	 *
-	 *			-0.385,-0.231,0.0,1.0
-	 *			-0.538,-0.538,1.0,0.0
-	 *			-0.63,-0.259,1.0,0.0
-	 *			-0.091,-0.636,0.0,1.0
-	 * 
-	 * The each row consists of four columns. The first two columns will map to the input
-	 * neurons and the last two columns to the output neurons. In the above example, rows 
-	 * 1 an 4 train the network with features to identify a category 2. Rows 2 and 3 contain
-	 * features relating to category 1.
-	 * 
-	 * You can normalize the data using the Utils class either before or after writing to 
-	 * or reading from the CSV file. 
-	 */
-	private int inputs;
-	
+	private int inputSize;
 	private BasicNetwork network;
 	private MLDataSet trainingSet;
 	
-	// First attempt - 500 input nodes, Sigmoid activation functions (all), 250 nodes on hidden layer. Output has biases.
+	private final static NeuralNetwork instance = new NeuralNetwork();
 	
-	public NeuralNetwork(int inputs) {
-		this.inputs = inputs;
+	private NeuralNetwork() {}
+	
+	public static NeuralNetwork getInstance() {
+        return instance;
+    }
+	
+	// Setters
+	public void setInputSize(int inputSize) {
+		this.inputSize = inputSize;
+	}
+
+	public void setTrainingSet(MLDataSet trainingSet) {
+		this.trainingSet = trainingSet;
 	}
 	
+	public BasicNetwork getNetwork() {
+		return network;
+	}
+	
+	public void setNetwork(BasicNetwork network) {
+		this.network = network;
+	}
+
 	public void startTraining() {	
-		//int inputs = 100; //Change this to the number of input neurons
-		int outputs = 235; //Change this to the number of output neurons
+		// Output number (235 languages in training set).
+		int outputs = 235; 
 		double scalingFactor = 0.015;
 		
 		//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
-		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputs, outputs, false);
+		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputSize, outputs, false);
 		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
 		trainingSet = mdl.external2Memory();
-		
-		//int hiddenLayerNodes = 500;
 		
 		// Calculations
 		//int hiddenLayerNodes = inputs + outputs;
 		//int hiddenLayerNodes = (int) ((inputs * 0.66) + outputs);
-		int hiddenLayerNodes = (int) Math.sqrt(inputs * outputs);
+		int hiddenLayerNodes = (int) Math.sqrt(inputSize * outputs);
 		//int hiddenLayerNodes = (int) (11750 / (scalingFactor * (inputs + outputs)));
 		
 		System.out.println(hiddenLayerNodes);
 		
 		//Configure the neural network topology. 
 		network = new BasicNetwork();
-		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputs, 0.8));
+		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, inputSize, 0.8));
 		network.addLayer(new BasicLayer(new ActivationTANH(), true, hiddenLayerNodes, 0.8));
 		network.addLayer(new BasicLayer(new ActivationSoftMax(), false, outputs, 0.8));
 		network.getStructure().finalizeStructure();
 		network.reset();
-		//network.reset(1000);
 		
 		FoldedDataSet folded = new FoldedDataSet(trainingSet);
 		MLTrain train = new ResilientPropagation(network, folded);
@@ -104,9 +93,6 @@ public class NeuralNetwork {
 		
 		//PruneSelective p = new PruneSelective(network);
 		//p.prune(0, 1);
-
-		//Use backpropagation training with alpha=0.1 and momentum=0.2
-		//Backpropagation trainer = new Backpropagation(network, trainingSet, 0.1, 0.2);
 		
 		long startTime = System.nanoTime(); 
 		
@@ -282,36 +268,15 @@ public class NeuralNetwork {
 //		System.out.println("0:  " + countzero);
 	}
 	
-	public void saveNetwork() {
-		Scanner console = new Scanner(System.in);
-		boolean isValid;
-		
-		// Save
-		do {
-			System.out.println("\nWould you like to save the neural network:\n (1) Yes\n (2) No");
-			String option = console.next();
-			
-			isValid = true;
-			
-			if (Integer.parseInt(option) == 1) {
-				// Save Network
-				System.out.println("Please enter the name of the Neural Network file (Extension is not required).");
-				String nnFilePath = console.nextLine();
-				
-				Utilities.saveNeuralNetwork(network, "./" + nnFilePath + ".nn");
-				
-				isValid = false;
-			} else if (Integer.parseInt(option) == 2) {
-				isValid = false;
-			} else {
-				System.out.println("Invalid option, please try again.");
-			} 
-		} while (isValid);
-	}
+	
 	
 	public void loadNetwork(String fileName) {
-		
 		network = Utilities.loadNeuralNetwork(fileName);
+	}
+	
+	public void viewTopology() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	private int getMaxIndex(double[] input) {
@@ -365,7 +330,7 @@ public class NeuralNetwork {
 			e.printStackTrace();
 		}
 		
-		NeuralNetwork nn = new NeuralNetwork(inputs);
+		NeuralNetwork nn = NeuralNetwork.getInstance();
 		nn.startTraining();
 		nn.startTests();
 	}
