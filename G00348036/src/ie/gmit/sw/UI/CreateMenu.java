@@ -1,12 +1,9 @@
-package ie.gmit.sw.UI;
+package ie.gmit.sw.ui;
 
-import java.io.File;
 import java.util.Scanner;
 
-import ie.gmit.sw.NeuralNetwork;
-import ie.gmit.sw.TestProcessor;
-import ie.gmit.sw.Utilities;
-import ie.gmit.sw.VectorProcessor;
+import ie.gmit.sw.nn.NeuralNetwork;
+import ie.gmit.sw.processor.TrainingProcessor;
 
 /**
 * Displays and handles UI options for creating neural network.
@@ -23,7 +20,7 @@ public class CreateMenu {
 		
 		// Create new MenuHelper, this contains all UI methods 
 		// and instance variables for ngrams and vector input sizes.
-		MenuHelper ui = new MenuHelper();
+		UIFunctions ui = new UIFunctions();
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
 		
@@ -33,7 +30,7 @@ public class CreateMenu {
 		
 		// Process traing data set, and start training.
 		try {
-			new VectorProcessor(ui.getVectorSize(), ui.getKmers()).processFile();
+			new TrainingProcessor(ui.getVectorSize(), ui.getKmers()).processFile();
 			nn.startTraining();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

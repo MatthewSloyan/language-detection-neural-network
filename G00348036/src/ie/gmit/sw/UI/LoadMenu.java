@@ -1,10 +1,6 @@
-package ie.gmit.sw.UI;
+package ie.gmit.sw.ui;
 
-import java.io.File;
 import java.util.Scanner;
-
-import ie.gmit.sw.NeuralNetwork;
-import ie.gmit.sw.Utilities;
 
 /**
 * Displays and handles UI options for loading neural network.
@@ -15,29 +11,40 @@ public class LoadMenu {
 	
 	private Scanner console = new Scanner(System.in);
 	private boolean isValid;
-	
-	private String nnFilePath;
+
 	public void display() {
 		
-		MenuHelper ui = new MenuHelper();
+		UIFunctions ui = new UIFunctions();
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
+		ui.loadNetwork();
 		
+		// Menu
 		do {
-			System.out.println("Please enter path to Neural Network file.");
-			nnFilePath = console.nextLine();
-
-			File f = new File(nnFilePath);
-			isValid = true;
-		
-			//check if file exists, keeps asking till it is valid
-			if (f.exists()) {
-				isValid = false;
+			System.out.println("\nPlease select an option:\n"
+					+ "(1) Predict Language from String Input\n"
+					+ "(2) Predict Language from File\n"
+					+ "(3) Return to main menu.");
+			String option = console.next();
 			
-				NeuralNetwork.getInstance().setNetwork(Utilities.loadNeuralNetwork(nnFilePath));
-			} else {
-				System.out.println("File does not exist, please try again.");
-			}
+			isValid = true;
+			
+			switch (Integer.parseInt(option))
+			{
+				case 1:
+					ui.predictLanguageString();
+					break;
+				case 2:
+					ui.predictLanguageFile();
+					break;
+				case 3:
+					// Exit and return to main menu.
+					isValid = false;
+					break;
+				default:
+					System.out.println("Invalid input, please try again.");
+			} // menu selection switch
+			
 		} while (isValid);
 	}
 }

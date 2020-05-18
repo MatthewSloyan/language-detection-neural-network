@@ -1,5 +1,4 @@
-package ie.gmit.sw.UI;
-import java.io.IOException;
+package ie.gmit.sw.ui;
 import java.util.*;
 
 public class MainMenu {
