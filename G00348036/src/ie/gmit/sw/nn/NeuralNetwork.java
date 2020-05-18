@@ -102,7 +102,7 @@ public class NeuralNetwork {
 		System.out.println("\nTraining started..\n");
 		
 		long start = System.currentTimeMillis();
-		long end = start + 120*1000; // 120 seconds * 1000 ms/sec
+		long end = start + 120*1000;
 
 		//Train the neural network
 		double minError = 0.0025;
@@ -122,12 +122,11 @@ public class NeuralNetwork {
 	public void startTests() {
 		// Step 4: Test the NN
 		double correct = 0;
-		double truePositive = 0, trueNegative= 0, falsePositive = 0, falseNegative= 0;
 		double total = 0;
 		
 		System.out.println("\nTesting started..\n");
 		
-		//int countone = 0, countminusone = 0, countzero = 0;
+		ConfusionMatrix cm = new ConfusionMatrix();
 		
 		for (MLDataPair pair : trainingSet) {
 			total++;
@@ -135,114 +134,34 @@ public class NeuralNetwork {
 			MLData output = network.compute(pair.getInput());
 			
 			double[] expected = output.getData();
-			int expectedIndex = getMaxIndex(expected);
-				
 			double[] actual = pair.getIdeal().getData();
-			int actualIndex = getMaxIndex(actual);
-		
+			
+			int expectedIndex = 0;
+			int actualIndex = 0;
+			
+			for (int i = 0; i < expected.length; i++){
+			   if (expected[i] > expected[expectedIndex]) {
+				   expectedIndex = i;
+			   }
+			   
+			   if (actual[i] > actual[actualIndex]) {
+				   actualIndex = i;
+			   }
+			   
+			   // Total up
+			   cm.addToMatrix((int)Math.round(expected[i]), (int)actual[i]);
+			}
+			
 			if (expectedIndex == actualIndex) {
 				correct++;
 			}
-			
-//			int y = (int) Math.round(output.getData(0));
-//			int yd = (int) pair.getIdeal().getData(0);
-//			
-//			//System.out.println(y + " " + yd);
-//			
-//			if(y == 1){
-//				if(y == yd){
-//					truePositive++;
-//				}
-//				else{
-//					falseNegative++;
-//				}
-//			}
-//			
-//			if(y == 0){
-//				if(y == yd){
-//					trueNegative++;
-//				}
-//				else{
-//					falsePositive++;
-//				}
-//			}
-			
-			//int test = (int) output.getData(0); 
-			
-			//System.out.println(output.getData(1));
-			
-			//System.out.println(indexOfMax);
-			
-			//double max = Arrays.stream(actual).max().getAsDouble();
-			//System.out.println("Max = " + max);
-			
-			//System.out.println(actual);
-			
-			
-//			for (int i = 0; i < actual.length; i++) {
-//				System.out.print(actual[i] + " ");
-//			}
-//			System.out.println();
-//			
-//			for (int i = 0; i < expected.length; i++) {
-//				System.out.print(expected[i] + " ");
-//			}
-//			
-//			//System.out.println(expected);
-//			
-//			//System.out.println("E: " + expected + " A: " + actual);
-//			
-//			if(actual == 1)
-//				countone++;
-//			
-//			if(actual == -1)
-//				countminusone++;
-//			
-//			if(actual == 0)
-//				countzero++;
-//			
-//			if(actual > 0){
-//                if(actual == expected){
-//                    truePositive++;
-//                    correct++;
-//                }
-//                else{
-//                    falseNegative++;
-//                }
-//            }
-//			
-//            if(actual <= 0){
-//                if(actual == expected){
-//                    trueNegative++;
-//                    correct++;
-//                }
-//                else{
-//                    falsePositive++;
-//                }
-//            }
 		}
-		
-		//sensitivity (sn) = TP (TP + FN)
-		//specificity (sP) = TN / (TN + FP)
 				
-//		double sensitivity = truePositive * (truePositive + falseNegative);
-//		double specificity = trueNegative / (trueNegative + falsePositive);
-				
-		System.out.println("Testing complete. Acc=" + ((correct / total) * 100));
-		System.out.println("Total: 	 " + total);
-		System.out.println("Correct: " + correct);
+		System.out.println("Total: 	  " + total);
+		System.out.println("Correct:  " + correct);
+		System.out.println("Accuracy: " + ((correct / total) * 100) + "%");
 		
-//		System.out.println("\nTP: " + truePositive);
-//		System.out.println("TN: " + trueNegative);
-//		System.out.println("FP: " + falsePositive);
-//		System.out.println("FN: " + falseNegative);
-//		
-//		System.out.println("\nSensitivity (sn): " + sensitivity);
-//		System.out.println("Specificity (sP): " + specificity);
-//		
-//		System.out.println("1:  " + countone);
-//		System.out.println("-1:  " + countminusone);
-//		System.out.println("0:  " + countzero);
+		cm.printResults();
 	}
 	
 	public void viewTopology() {

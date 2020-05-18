@@ -3,11 +3,11 @@ import java.util.*;
 
 public class MainMenu {
 	private Scanner console = new Scanner(System.in);
-	private String text = "Please select an option:\n (1) Create new Neural Network\n (2) Load Existing Neural Network\n (3) Exit Program";
+	private String text = "\nPlease select an option:\n (1) Create new Neural Network\n (2) Load Existing Neural Network\n (3) Exit Program";
 	boolean keepRunning = true;
 	
 	public void display() {
-		System.out.println("====== Language Detection Application ====== ");
+		System.out.println("====== Language Detection Application ======");
  		
  		//Running time: O(N);
 		while(keepRunning) {

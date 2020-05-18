@@ -43,7 +43,7 @@ public class CreateMenu {
 		do {
 			System.out.println("\nPlease select an option:\n"
 					+ "(1) View Topology Structure\n"
-					+ "(2) View Accuracy & Run Tests\n"
+					+ "(2) View Accuracy, Confusion Matrix & Run Tests\n"
 					+ "(3) Predict Language from String Input\n"
 					+ "(4) Predict Language from File\n"
 					+ "(5) Return to main menu.");
