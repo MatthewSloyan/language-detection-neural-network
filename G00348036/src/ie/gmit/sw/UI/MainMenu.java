@@ -1,7 +1,7 @@
 package ie.gmit.sw.ui;
 import java.util.*;
 
-public class MainMenu {
+public class MainMenu implements Menuable {
 	private Scanner console = new Scanner(System.in);
 	private String text = "\nPlease select an option:\n (1) Create new Neural Network\n (2) Load Existing Neural Network\n (3) Exit Program";
 	boolean keepRunning = true;

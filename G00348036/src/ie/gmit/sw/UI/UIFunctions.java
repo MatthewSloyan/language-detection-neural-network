@@ -3,7 +3,10 @@ package ie.gmit.sw.ui;
 import java.io.File;
 import java.util.Scanner;
 
-import ie.gmit.sw.nn.NeuralNetwork;
+import org.encog.neural.networks.BasicNetwork;
+
+import ie.gmit.sw.nn.CrossValidationNeuralNetwork;
+import ie.gmit.sw.nn.NeuralNetworkable;
 import ie.gmit.sw.nn.Utilities;
 import ie.gmit.sw.processor.TestProcessor;
 
@@ -21,10 +24,9 @@ public class UIFunctions {
 		return vectorSize;
 	}
 
-	public void saveNetwork() {
+	public void saveNetwork(BasicNetwork basicNetwork) {
 		boolean isValid;
 		
-		console.nextLine();
 		// Save
 		do {
 			System.out.println("\nWould you like to save the neural network:\n (1) Yes\n (2) No");
@@ -37,7 +39,7 @@ public class UIFunctions {
 				System.out.println("Please enter the name of the Neural Network file (Extension is not required).");
 				String nnFilePath = console.next();
 				
-				Utilities.saveNeuralNetwork(NeuralNetwork.getInstance().getNetwork(), "./" + nnFilePath + ".nn");
+				Utilities.saveNeuralNetwork(basicNetwork, "./" + nnFilePath + ".nn");
 				
 				isValid = false;
 			} else if (Integer.parseInt(option) == 2) {
@@ -46,9 +48,11 @@ public class UIFunctions {
 				System.out.println("Invalid option, please try again.");
 			} 
 		} while (isValid);
+		
+		console.nextLine();
 	}
 	
-	public void loadNetwork() {
+	public void loadNetwork(NeuralNetworkable nn) {
 		boolean isValid;
 		
 		do {
@@ -62,11 +66,13 @@ public class UIFunctions {
 			if (f.exists()) {
 				isValid = false;
 			
-				NeuralNetwork.getInstance().setNetwork(Utilities.loadNeuralNetwork(nnFilePath));
+				nn.setNetwork(Utilities.loadNeuralNetwork(nnFilePath));
 			} else {
 				System.out.println("File does not exist, please try again.");
 			}
 		} while (isValid);
+		
+		console.nextLine();
 	}
 	
 	public void setNgramSizeUI() {
@@ -91,6 +97,8 @@ public class UIFunctions {
 				System.out.println("Input must be numbers. Please try again.");
 			}
 		} while (isValid);
+		
+		console.nextLine();
 	}
 
 	public void setVectorSizeUI() {
@@ -115,10 +123,11 @@ public class UIFunctions {
 				System.out.println("Input must be numbers. Please try again.");
 			}
 		} while (isValid);
+	
+		console.nextLine();
 	}
 	
-	public void predictLanguageString() {
-		console.nextLine();
+	public void predictLanguageString(NeuralNetworkable nn) {
 		
 		System.out.println("Please enter paragraph or sample of language you would like to predict.");
 		String userInput = console.nextLine();
@@ -131,14 +140,12 @@ public class UIFunctions {
 			System.out.println("Error occured processing string. Please try again.");
 		}
 		
-		String prediction = NeuralNetwork.getInstance().predict(processor.getVector());
+		String prediction = nn.predict(processor.getVector());
 	
 		System.out.println("\nThe Predicted language is: " + prediction);
 	}
 	
-	public void predictLanguageFile() {
-		console.nextLine();
-		
+	public void predictLanguageFile(NeuralNetworkable nn) {
 		File f;
 		boolean isValid;
 		
@@ -155,16 +162,16 @@ public class UIFunctions {
 				
 				TestProcessor processor = new TestProcessor(vectorSize, kmers);
 				
-				processor.processFile(f);
+				processor.processFile(predictionFilePath);
 				
-				String prediction = NeuralNetwork.getInstance().predict(processor.getVector());
+				String prediction = nn.predict(processor.getVector());
 			
 				System.out.println("\nThe Predicted language is: " + prediction);
 			} else {
 				System.out.println("File does not exist, please try again.");
 			}
 		} while (isValid);
+		
+		console.nextLine();
 	}
-
-	
 }

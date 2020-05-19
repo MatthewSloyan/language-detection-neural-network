@@ -2,24 +2,33 @@ package ie.gmit.sw.ui;
 
 import java.util.Scanner;
 
+import ie.gmit.sw.nn.NeuralNetworkFactory;
+import ie.gmit.sw.nn.NeuralNetworkable;
+
 /**
 * Displays and handles UI options for loading neural network.
 *
 * @author Matthew Sloyan
 */
-public class LoadMenu {
+public class LoadMenu implements Menuable {
 	
 	private Scanner console = new Scanner(System.in);
 	private boolean isValid;
+	
+	// Get instance of NeuralNetwork, and set input size.
+	NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
+	private NeuralNetworkable nn;
 
 	public void display() {
 		
+		// 
+		nn = factory.getNeuralNetwork("CV");
+				
 		UIFunctions ui = new UIFunctions();
-		
-		ui.loadNetwork();
-		
+		ui.loadNetwork(nn);
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
+		nn.setInputSize(ui.getVectorSize());
 		
 		// Menu
 		do {
@@ -34,10 +43,10 @@ public class LoadMenu {
 			switch (Integer.parseInt(option))
 			{
 				case 1:
-					ui.predictLanguageString();
+					ui.predictLanguageString(nn);
 					break;
 				case 2:
-					ui.predictLanguageFile();
+					ui.predictLanguageFile(nn);
 					break;
 				case 3:
 					// Exit and return to main menu.

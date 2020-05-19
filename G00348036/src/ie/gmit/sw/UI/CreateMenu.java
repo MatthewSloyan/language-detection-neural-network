@@ -2,7 +2,9 @@ package ie.gmit.sw.ui;
 
 import java.util.Scanner;
 
-import ie.gmit.sw.nn.NeuralNetwork;
+import ie.gmit.sw.nn.CrossValidationNeuralNetwork;
+import ie.gmit.sw.nn.NeuralNetworkFactory;
+import ie.gmit.sw.nn.NeuralNetworkable;
 import ie.gmit.sw.processor.TrainingProcessor;
 
 /**
@@ -10,11 +12,13 @@ import ie.gmit.sw.processor.TrainingProcessor;
 *
 * @author Matthew Sloyan
 */
-public class CreateMenu {
+public class CreateMenu implements Menuable {
 	
 	private Scanner console = new Scanner(System.in);
 	private boolean isValid;
-	private NeuralNetwork nn;
+
+	NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
+	private NeuralNetworkable nn;
 
 	public void display() {
 		
@@ -25,19 +29,19 @@ public class CreateMenu {
 		ui.setVectorSizeUI();
 		
 		// Get instance of NeuralNetwork, and set input size.
-		nn = NeuralNetwork.getInstance();
+		nn = factory.getNeuralNetwork("CV");
 		nn.setInputSize(ui.getVectorSize());
 		
-		// Process traing data set, and start training.
+		// Process training data set, and start training.
 		try {
-			new TrainingProcessor(ui.getVectorSize(), ui.getKmers()).processFile();
+			new TrainingProcessor(ui.getVectorSize(), ui.getKmers()).processFile("./wili-2018-Small-11750-Edited.txt");
 			nn.startTraining();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		
 		// Ask the user if they'd like to save the neural network.
-		ui.saveNetwork();
+		ui.saveNetwork(nn.getNetwork());
 		
 		// Menu
 		do {
@@ -60,10 +64,10 @@ public class CreateMenu {
 					nn.startTests();
 					break;
 				case 3:
-					ui.predictLanguageString();
+					ui.predictLanguageString(nn);
 					break;
 				case 4:
-					ui.predictLanguageFile();
+					ui.predictLanguageFile(nn);
 					break;
 				case 5:
 					// Exit and return to main menu.

@@ -6,55 +6,52 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
 import ie.gmit.sw.nn.Utilities;
 
-public class TrainingProcessor {
+public class TrainingProcessor implements Processable{
 
-	private int n;
+	private int ngramSize;
 	private double[] vector;
+	
 	private DecimalFormat df = new DecimalFormat("###.###");
 	private Language[] langs = Language.values();
 	private FileWriter fw;
 	
-	public TrainingProcessor(int vectorInput, int n) {
+	public TrainingProcessor(int vectorInput, int ngramSize) {
 		super();
 		this.vector = new double[vectorInput];
-		this.n = n;
+		this.ngramSize = ngramSize;
 	}
 	
-	public void processFile() throws Exception {
+	public void processFile(String fileName){
+		
+		//"./wili-2018-Small-11750-Edited.txt"
 		
 		try {
 			// Read in Wili Text file.
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					new FileInputStream(new File("./wili-2018-Small-11750-Edited.txt"))));
-			
-			if (!br.ready()) {
-				System.out.println("Error occured: Please make sure the Wili text file is in the same directory.");
-			}
-			else {
-				// Create new file to write CSV data to.
-				fw = new FileWriter("./data.csv");
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fileName))));
 
-				String line = null;
-				while((line = br.readLine()) != null) {
-					// Process data.
-					processLine(line);
-					// Track total
-				}
-				
-				// Close Wili and 
-				br.close();
-				fw.close();
+			// Create new file to write CSV data to.
+			fw = new FileWriter("./data.csv");
+
+			String line = null;
+			while((line = br.readLine()) != null) {
+				// Process data.
+				processLine(line);
+				// Track total
 			}
+			
+			// Close Wili and 
+			br.close();
+			fw.close();
 			
 		} catch (Exception e) {
+			System.out.println("Error occured: Please make sure the Wili text file is in the same directory.");
 		}
 	}
 	
-	private void processLine(String line) throws Exception{
+	public void processLine(String line){
 
 		try {
 			String[] record = line.split("@");
@@ -67,8 +64,8 @@ public class TrainingProcessor {
 			// Initialise vector to 0;
 			for (int i = 0; i < vector.length; i++) vector[i] = 0;
 			
-			for (int i = 0; i < text.length() - n; i += n) {
-				CharSequence kmer = text.substring(i, i + n);
+			for (int i = 0; i < text.length() - ngramSize; i += ngramSize) {
+				CharSequence kmer = text.substring(i, i + ngramSize);
 				int index = kmer.hashCode() % vector.length;
 				vector[index]++;
 			}

@@ -2,8 +2,14 @@ package ie.gmit.sw.nn;
 
 import java.io.File;
 import java.util.Arrays;
+
+import org.encog.ml.data.MLDataSet;
+import org.encog.ml.data.buffer.MemoryDataLoader;
+import org.encog.ml.data.buffer.codec.CSVDataCODEC;
+import org.encog.ml.data.buffer.codec.DataSetCODEC;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.persist.EncogDirectoryPersistence;
+import org.encog.util.csv.CSVFormat;
 
 public class Utilities {
 
@@ -68,4 +74,12 @@ public class Utilities {
     public static BasicNetwork loadNeuralNetwork(String fileName){
     	return (BasicNetwork)EncogDirectoryPersistence.loadObject(new File(fileName));
     }
+    
+//    public static MLDataSet loadDataSet(String fileName){
+//    	//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
+//		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputSize, outputSize, false);
+//		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
+//		trainingSet = mdl.external2Memory();
+//    }
+    
 }

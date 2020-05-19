@@ -10,33 +10,29 @@ import java.text.DecimalFormat;
 
 import ie.gmit.sw.nn.Utilities;
 
-public class TestProcessor {
+public class TestProcessor implements Processable{
 	
-	private int n = 4;
+	private int ngramSize;
 	private double[] vector;
 
-	public TestProcessor(int vectorInput, int n) {
+	public TestProcessor(int vectorInput, int ngramSize) {
 		super();
 		this.vector = new double[vectorInput];
-		this.n = n;
+		this.ngramSize = ngramSize;
 	}
 
 	public double[] getVector() {
 		return vector;
 	}
 	
-    public void processFile(File file) {
+    public void processFile(String fileName) {
 		
 		try {
 			// Read in File
-			//BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
-			BufferedReader br = new BufferedReader(new FileReader(file)); 
-			
-			//System.out.println("Test");
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 			
 			String line = null;
 			while((line = br.readLine()) != null) {
-				//System.out.println(line);
 				processLine(line);
 			}
 			
@@ -47,13 +43,13 @@ public class TestProcessor {
 		}
 	}
 	
-	public void processLine(String line) throws Exception{
+	public void processLine(String line){
 
 		try {
 			line = line.toLowerCase();
 			
-			for (int i = 0; i < line.length() - n; i += n) {
-				CharSequence kmer = line.substring(i, i + n);
+			for (int i = 0; i < line.length() - ngramSize; i += ngramSize) {
+				CharSequence kmer = line.substring(i, i + ngramSize);
 				//System.out.println(kmer);
 				int index = kmer.hashCode() % vector.length;
 				vector[index]++;
