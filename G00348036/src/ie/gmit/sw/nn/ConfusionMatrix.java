@@ -1,5 +1,14 @@
 package ie.gmit.sw.nn;
 
+/**
+* Class that is instantiated when testing neural network. It contains instance variables for TP, TN, FP and FN.
+* These values are updated on each call of addToMatrix.
+* 
+* With these values the sensitivity (sn) = TP (TP + FN) and 
+* specificity (sP) = TN / (TN + FP) can be calculated and displayed.
+* 
+* @author Matthew Sloyan
+*/
 public class ConfusionMatrix {
 	
 	private double truePositive = 0;
@@ -20,6 +29,9 @@ public class ConfusionMatrix {
 		return falseNegative;
 	}
 	
+	/**
+	* TP, TN, FP and FN values are updated on each call depending on input.
+	*/
 	public void addToMatrix(int expected, int actual) {
 		
 		if (expected == 1 && actual == 1) {
@@ -39,9 +51,11 @@ public class ConfusionMatrix {
 		}
 	}
 	
+	/**
+	* Method to print out sensitivity (sn) = TP (TP + FN) and 
+	* specificity (sP) = TN / (TN + FP)
+	*/
 	public void printResults() {
-		//sensitivity (sn) = TP (TP + FN)
-		//specificity (sP) = TN / (TN + FP)
 		double sensitivity = truePositive * (truePositive + falseNegative);
 		double specificity = trueNegative / (trueNegative + falsePositive);
 		

@@ -3,13 +3,8 @@ package ie.gmit.sw.nn;
 import java.io.File;
 import java.util.Arrays;
 
-import org.encog.ml.data.MLDataSet;
-import org.encog.ml.data.buffer.MemoryDataLoader;
-import org.encog.ml.data.buffer.codec.CSVDataCODEC;
-import org.encog.ml.data.buffer.codec.DataSetCODEC;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.persist.EncogDirectoryPersistence;
-import org.encog.util.csv.CSVFormat;
 
 public class Utilities {
 
@@ -75,11 +70,22 @@ public class Utilities {
     	return (BasicNetwork)EncogDirectoryPersistence.loadObject(new File(fileName));
     }
     
-//    public static MLDataSet loadDataSet(String fileName){
-//    	//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
-//		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputSize, outputSize, false);
-//		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
-//		trainingSet = mdl.external2Memory();
-//    }
-    
+    /**
+     * Helper method that can be used to get the max index of any array.
+     * This was initially used in testing the network but it was removed for a more efficient approach.
+     * However it is still used when predicting a result.
+     * 
+     * @param input array of doubles to get the max index from.
+     * @return indexOfMax the max index in array.
+     */
+    public static int getMaxIndex(double[] input) {
+		int indexOfMax = 0;
+		
+		for (int i = 0; i < input.length; i++){
+		   if (input[i] > input[indexOfMax]) {
+			   indexOfMax = i;
+		   }
+		}
+		return indexOfMax;
+	}
 }

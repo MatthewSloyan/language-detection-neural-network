@@ -5,11 +5,17 @@ import java.util.Scanner;
 
 import org.encog.neural.networks.BasicNetwork;
 
-import ie.gmit.sw.nn.CrossValidationNeuralNetwork;
 import ie.gmit.sw.nn.NeuralNetworkable;
 import ie.gmit.sw.nn.Utilities;
 import ie.gmit.sw.processor.TestProcessor;
 
+/**
+* Class that provides all UI functions and user inputs.
+* All methods are reusable, for example another type of network could be loaded, saved or have a result predicted.
+* All methods are validated, so that the user can only enter correct values, numbers or files that exist.
+*
+* @author Matthew Sloyan
+*/
 public class UIFunctions {
 	
 	private Scanner console = new Scanner(System.in);
@@ -24,10 +30,17 @@ public class UIFunctions {
 		return vectorSize;
 	}
 
-	public void saveNetwork(BasicNetwork basicNetwork) {
+	/**
+	* Method that allows the user to save their trained neural network.
+	* It will work with any type due to NeuralNetworkable interface.
+	* All inputs are validated so that a user can only select yes or no.
+	*
+	* @param nn instance of neural network type.
+	* @see Utilities
+	*/
+	public void saveNetwork(NeuralNetworkable nn) {
 		boolean isValid;
 		
-		// Save
 		do {
 			System.out.println("\nWould you like to save the neural network:\n (1) Yes\n (2) No");
 			String option = console.next();
@@ -39,7 +52,7 @@ public class UIFunctions {
 				System.out.println("Please enter the name of the Neural Network file (Extension is not required).");
 				String nnFilePath = console.next();
 				
-				Utilities.saveNeuralNetwork(basicNetwork, "./" + nnFilePath + ".nn");
+				Utilities.saveNeuralNetwork(nn.getNetwork(), "./" + nnFilePath + ".nn");
 				
 				isValid = false;
 			} else if (Integer.parseInt(option) == 2) {
@@ -52,6 +65,14 @@ public class UIFunctions {
 		console.nextLine();
 	}
 	
+	/**
+	* Method that allows the user to load their trained neural network.
+	* It will work with any type due to NeuralNetworkable interface.
+	* All inputs are validated so that user can only select a valid file.
+	*
+	* @param nn instance of neural network type.
+	* @see Utilities
+	*/
 	public void loadNetwork(NeuralNetworkable nn) {
 		boolean isValid;
 		
@@ -75,6 +96,11 @@ public class UIFunctions {
 		console.nextLine();
 	}
 	
+	/**
+	* Method that gets the n-gram size from the user. (1, 2, 3, 4).
+	* All inputs are validated so that user can input 1-4. 
+	* 2 is recommended from testing.
+	*/
 	public void setNgramSizeUI() {
 		boolean isValid;
 		
@@ -101,12 +127,17 @@ public class UIFunctions {
 		console.nextLine();
 	}
 
+	/**
+	* Method that gets the vector input size from the user.
+	* All inputs are validated so that user can input between 100 and 2000.
+	* Around 600 is recommended from testing.
+	*/
 	public void setVectorSizeUI() {
 		boolean isValid;
 		
 		do
 		{
-			System.out.println("\nPlease enter the vector size. (1000 is recommended)");
+			System.out.println("\nPlease enter the vector size. (650 is recommended)");
             String vectorInput = console.next();
             
             isValid = true;
@@ -127,11 +158,22 @@ public class UIFunctions {
 		console.nextLine();
 	}
 	
+	/**
+	* Method that allows the user to predict a language result using a string.
+	* It will work with any type due to NeuralNetworkable interface.
+	* This method is used in CreateMenu and LoadMenu.
+	* 
+	* The line is processed into a vector and this vector is fed into the nn.
+	*
+	* @param nn instance of neural network type.
+	* @see TestProcessor
+	*/
 	public void predictLanguageString(NeuralNetworkable nn) {
 		
 		System.out.println("Please enter paragraph or sample of language you would like to predict.");
 		String userInput = console.nextLine();
 		
+		// Setup processor with inputs and process string into vector.
 		TestProcessor processor = new TestProcessor(vectorSize, kmers);
 		
 		try {
@@ -145,6 +187,18 @@ public class UIFunctions {
 		System.out.println("\nThe Predicted language is: " + prediction);
 	}
 	
+	/**
+	* Method that allows the user to predict a language result from a file.
+	* This file must be a text file and can contain any number of lines of text of one language.
+	* It will work with any type due to NeuralNetworkable interface.
+	* All inputs are validated so that user can only select a valid file.
+	* This method is used in CreateMenu and LoadMenu.
+	* 
+	* The file is processed into a vector and this vector is fed into the nn.
+	*
+	* @param nn instance of neural network type.
+	* @see TestProcessor
+	*/
 	public void predictLanguageFile(NeuralNetworkable nn) {
 		File f;
 		boolean isValid;
@@ -160,8 +214,8 @@ public class UIFunctions {
 			if (f.exists()) {
 				isValid = false;
 				
+				// Setup processor with inputs and process string into vector.
 				TestProcessor processor = new TestProcessor(vectorSize, kmers);
-				
 				processor.processFile(predictionFilePath);
 				
 				String prediction = nn.predict(processor.getVector());

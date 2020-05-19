@@ -1,15 +1,16 @@
 package ie.gmit.sw.processor;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.text.DecimalFormat;
-
 import ie.gmit.sw.nn.Utilities;
 
+/**
+ * Class used to process a piece of text from a text file and add it to a vector array.
+ * Also can add a single string to vector array for use in UI.
+ * 
+ * @author Matthew
+ */
 public class TestProcessor implements Processable{
 	
 	private int ngramSize;
@@ -25,6 +26,10 @@ public class TestProcessor implements Processable{
 		return vector;
 	}
 	
+	/**
+	 * Method that can take in any text file, and parse it line by line to add to the vector only.
+	 * The functionality is similar to TraninProcessor but I felt having two separate classes improved simplicity.
+	 */
     public void processFile(String fileName) {
 		
 		try {
@@ -43,6 +48,14 @@ public class TestProcessor implements Processable{
 		}
 	}
 	
+    /**
+	 * Method that parses each line.
+	 * This can be reused for predicting a string.
+	 * First get string and pre-process.
+	 * Get the ngrams determined by the user. (2 is recommended from testing.)
+	 * And hash each ngram into the vector array using the formula "kmer.hashCode() % vector.length"
+	 * Normalize the data between 0 and 1 for consistent results.
+	 */
 	public void processLine(String line){
 
 		try {

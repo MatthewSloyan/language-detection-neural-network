@@ -20,8 +20,17 @@ public class CreateMenu implements Menuable {
 	NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
 	private NeuralNetworkable nn;
 
+	/**
+	* Displays all functions and menu to the user when creating a new neural network.
+	* UIFunctions handles all UI methods required and stores all user input variables required (ngrams and vectorSize).
+	* NeuralNetworkFactory is used to create an instance of the CrossValidationNeuralNetwork. 
+	* More of these could easily be added by adding another UI option to select network type.
+	*
+	* @see UIFunctions
+	* @see NeuralNetworkFactory
+	* @see NeuralNetworkable
+	*/
 	public void display() {
-		
 		// Create new MenuHelper, this contains all UI methods 
 		// and instance variables for ngrams and vector input sizes.
 		UIFunctions ui = new UIFunctions();
@@ -40,17 +49,15 @@ public class CreateMenu implements Menuable {
 			System.out.println(e.getMessage());
 		}
 		
-		// Ask the user if they'd like to save the neural network.
-		ui.saveNetwork(nn.getNetwork());
-		
 		// Menu
 		do {
 			System.out.println("\nPlease select an option:\n"
 					+ "(1) View Topology Structure\n"
 					+ "(2) View Accuracy, Confusion Matrix & Run Tests\n"
-					+ "(3) Predict Language from String Input\n"
-					+ "(4) Predict Language from File\n"
-					+ "(5) Return to main menu.");
+					+ "(3) Save Network\n"
+					+ "(4) Predict Language from String Input\n"
+					+ "(5) Predict Language from File\n"
+					+ "(6) Return to main menu.");
 			String option = console.next();
 			
 			isValid = true;
@@ -64,12 +71,16 @@ public class CreateMenu implements Menuable {
 					nn.startTests();
 					break;
 				case 3:
-					ui.predictLanguageString(nn);
+					ui.saveNetwork(nn);
 					break;
 				case 4:
-					ui.predictLanguageFile(nn);
+					// Pass in instance of NeuralNetworkable which holds network instance variable.
+					ui.predictLanguageString(nn);
 					break;
 				case 5:
+					ui.predictLanguageFile(nn);
+					break;
+				case 6:
 					// Exit and return to main menu.
 					isValid = false;
 					break;

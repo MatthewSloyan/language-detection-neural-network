@@ -19,13 +19,26 @@ public class LoadMenu implements Menuable {
 	NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
 	private NeuralNetworkable nn;
 
+	/**
+	* Displays all functions and menu to the user when loading a neural network.
+	* UIFunctions handles all UI methods required and stores all user input variables required (ngrams and vectorSize).
+	* NeuralNetworkFactory is used to create an instance of the CrossValidationNeuralNetwork. 
+	* More of these could easily be added by adding another UI option to select network type.
+	*
+	* @see UIFunctions
+	* @see NeuralNetworkFactory
+	* @see NeuralNetworkable
+	*/
 	public void display() {
 		
-		// 
+		// Create new instance of NN.
 		nn = factory.getNeuralNetwork("CV");
 				
+		// Ask the user to specify neural network file, ngrams size and vector input size. 
 		UIFunctions ui = new UIFunctions();
 		ui.loadNetwork(nn);
+		
+		System.out.println("Please note: N-gram and Vector size must be the same as intitial setup of network.");
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
 		nn.setInputSize(ui.getVectorSize());
@@ -43,6 +56,7 @@ public class LoadMenu implements Menuable {
 			switch (Integer.parseInt(option))
 			{
 				case 1:
+					// Pass in instance of NeuralNetworkable which holds network instance variable.
 					ui.predictLanguageString(nn);
 					break;
 				case 2:

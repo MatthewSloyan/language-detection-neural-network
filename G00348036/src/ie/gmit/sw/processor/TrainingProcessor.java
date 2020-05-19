@@ -9,11 +9,18 @@ import java.text.DecimalFormat;
 
 import ie.gmit.sw.nn.Utilities;
 
+/**
+ * Class used to process training data from text file and write results to CSV file.
+ * Also hashes file into a vector which is written to file with correct results.
+ * 
+ * @author Matthew
+ */
 public class TrainingProcessor implements Processable{
 
 	private int ngramSize;
 	private double[] vector;
 	
+	// Format number to 3 decimal places.
 	private DecimalFormat df = new DecimalFormat("###.###");
 	private Language[] langs = Language.values();
 	private FileWriter fw;
@@ -24,6 +31,9 @@ public class TrainingProcessor implements Processable{
 		this.ngramSize = ngramSize;
 	}
 	
+	/**
+	 * Method that can take in any text file, and parse it line by line to be written to a CSV file.
+	 */
 	public void processFile(String fileName){
 		
 		//"./wili-2018-Small-11750-Edited.txt"
@@ -51,6 +61,16 @@ public class TrainingProcessor implements Processable{
 		}
 	}
 	
+	/**
+	 * Method that parses each line.
+	 * First get string and language and pre-processes the string.
+	 * Initialize the vector input with 0's.
+	 * Get the ngrams determined by the user. (2 is recommended from testing.)
+	 * And hash each ngram into the vector array using the formula "kmer.hashCode() % vector.length"
+	 * Normalize the data between 0 and 1 for consistent results.
+	 * Append vector to CSV file along with an array of 0's, and a 1 in the index of the correct language.
+	 * This vector is used as the training data, and the array as the tests.
+	 */
 	public void processLine(String line){
 
 		try {
