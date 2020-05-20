@@ -34,18 +34,24 @@ public class ConfusionMatrix {
 	*/
 	public void addToMatrix(int expected, int actual) {
 		
+		// TP, so neural network has guessed correctly
 		if (expected == 1 && actual == 1) {
 			truePositive++;
 		}
 		
+		// FP, the actual is negative but the expected is positive.
+		// It was actually not something but the nn thought it was.
 		if (expected == 1 && actual != expected) {
 			falsePositive++;
 		}
 	      
+		// TN, so neural network has denied it correctly.
 		if (expected == 0 && actual == 0) {
 			trueNegative++;
 		}
 		   
+		// FP, the actual is positive but the expected is negative.
+		// It was actually something but the nn thought it was something else.
 		if (expected == 0 && actual != expected) {
 			falseNegative++;
 		}
@@ -59,7 +65,7 @@ public class ConfusionMatrix {
 		double sensitivity = truePositive * (truePositive + falseNegative);
 		double specificity = trueNegative / (trueNegative + falsePositive);
 		
-		System.out.println("\nTP: " + truePositive);
+		System.out.println("TP: " + truePositive);
 		System.out.println("TN: " + trueNegative);
 		System.out.println("FP: " + falsePositive);
 		System.out.println("FN: " + falseNegative);

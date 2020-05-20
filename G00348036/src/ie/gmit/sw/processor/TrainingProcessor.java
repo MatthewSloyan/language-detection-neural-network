@@ -84,7 +84,7 @@ public class TrainingProcessor implements Processable{
 			
 			String lang = record[1];
 			
-			// Initialise vector to 0;
+			// Initialize vector to 0;
 			for (int i = 0; i < vector.length; i++) vector[i] = 0;
 			
 			for (int i = 0; i < text.length() - ngramSize; i += ngramSize) {
@@ -93,15 +93,7 @@ public class TrainingProcessor implements Processable{
 				vector[index]++;
 			}
 			
-			// 3 and 4 kmers
-//			for (int i = 1; i <= 4; i++) {
-//				for (int j = 0; j < text.length() - i; j += i) {
-//					CharSequence kmer = text.substring(j, j + i);
-//					int index = kmer.hashCode() % vector.length;
-//					vector[index]++;
-//				}
-//			}
-			
+			// Normalize the vector between 0 and 1, and write to csv file.
 			vector = Utilities.normalize(vector, 0, 1);
 			
 			for (int i = 0; i < vector.length; i++) {
@@ -113,7 +105,7 @@ public class TrainingProcessor implements Processable{
 			// Adapted from: https://stackoverflow.com/questions/15436721/get-index-of-enum-from-string
 			int index = Language.valueOf(lang).ordinal();
 			
-			// Append 1 and 0s
+			// Append 1 and 0s. If 1 then it is the language.
 			for (int i = 0; i < langs.length; i++){
 				if (i == index) {
 					fw.append('1');
@@ -128,18 +120,5 @@ public class TrainingProcessor implements Processable{
 			
 		} catch (Exception e) {
 		}
-		
-		// Loop over "text"
-		// For each n-gram
-		// compute
-			// index = ngram.hashCode() % vector.length
-		//vector[index]++
-//		for (int i = 1; i <= n; i++) {
-//			for (int j = 0; j < record[0].length() - i; j++) {
-//				CharSequence kmer = record[0].substring(j, j + i);
-//				int index = kmer.hashCode() % vector.length;
-//				vector[index]++;
-//			}
-//		}
 	}
 }

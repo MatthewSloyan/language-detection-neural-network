@@ -9,14 +9,13 @@ import org.encog.neural.networks.BasicNetwork;
  */
 public interface NeuralNetworkable {
 	
-	// Methods that define behaviour of class.
+	// Methods that define behavior of class.
+	public void configureNetwork();
 	public void startTraining();
-	public void startTests();
-	public void viewTopology();
-	public String predict(double[] vector);
 	
 	// Might not be ideal to have gets/sets as they define state, but it allows resusability.
-	public void setInputSize(int inputSize);
-	public void setNetwork(BasicNetwork network);
 	public BasicNetwork getNetwork();
+	public void setNetwork(BasicNetwork network);
+	public Topology getTopology();
+	public void setTopology(Topology topology);
 }

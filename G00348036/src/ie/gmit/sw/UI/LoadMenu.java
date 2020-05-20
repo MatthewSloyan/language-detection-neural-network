@@ -3,6 +3,7 @@ package ie.gmit.sw.ui;
 import java.util.Scanner;
 
 import ie.gmit.sw.nn.NeuralNetworkFactory;
+import ie.gmit.sw.nn.NeuralNetworkFunctions;
 import ie.gmit.sw.nn.NeuralNetworkable;
 
 /**
@@ -18,6 +19,7 @@ public class LoadMenu implements Menuable {
 	// Get instance of NeuralNetwork, and set input size.
 	NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
 	private NeuralNetworkable nn;
+	private NeuralNetworkFunctions functions;
 
 	/**
 	* Displays all functions and menu to the user when loading a neural network.
@@ -41,7 +43,10 @@ public class LoadMenu implements Menuable {
 		System.out.println("Please note: N-gram and Vector size must be the same as intitial setup of network.");
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
-		nn.setInputSize(ui.getVectorSize());
+		
+		// Create a new functions object, this holds all common functionality to a neural network
+		// such as testing, predicting and viewing the topology. This allows it to be used with any network.
+		functions = new NeuralNetworkFunctions(nn);
 		
 		// Menu
 		do {
@@ -57,10 +62,10 @@ public class LoadMenu implements Menuable {
 			{
 				case 1:
 					// Pass in instance of NeuralNetworkable which holds network instance variable.
-					ui.predictLanguageString(nn);
+					ui.predictLanguageString(functions);
 					break;
 				case 2:
-					ui.predictLanguageFile(nn);
+					ui.predictLanguageFile(functions);
 					break;
 				case 3:
 					// Exit and return to main menu.

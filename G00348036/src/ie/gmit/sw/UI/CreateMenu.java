@@ -2,9 +2,10 @@ package ie.gmit.sw.ui;
 
 import java.util.Scanner;
 
-import ie.gmit.sw.nn.CrossValidationNeuralNetwork;
 import ie.gmit.sw.nn.NeuralNetworkFactory;
+import ie.gmit.sw.nn.NeuralNetworkFunctions;
 import ie.gmit.sw.nn.NeuralNetworkable;
+import ie.gmit.sw.nn.Topology;
 import ie.gmit.sw.processor.TrainingProcessor;
 
 /**
@@ -17,8 +18,9 @@ public class CreateMenu implements Menuable {
 	private Scanner console = new Scanner(System.in);
 	private boolean isValid;
 
-	NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
+	private NeuralNetworkFactory factory = NeuralNetworkFactory.getInstance();
 	private NeuralNetworkable nn;
+	private NeuralNetworkFunctions functions;
 
 	/**
 	* Displays all functions and menu to the user when creating a new neural network.
@@ -37,17 +39,26 @@ public class CreateMenu implements Menuable {
 		ui.setNgramSizeUI();
 		ui.setVectorSizeUI();
 		
-		// Get instance of NeuralNetwork, and set input size.
+		// Get instance of NeuralNetwork.
 		nn = factory.getNeuralNetwork("CV");
-		nn.setInputSize(ui.getVectorSize());
+		
+		// Set topology
+		Topology topology = new Topology(ui.getVectorSize(), 0, 235);
+		topology.setHiddenLayerSize();
+		nn.setTopology(topology);
 		
 		// Process training data set, and start training.
 		try {
 			new TrainingProcessor(ui.getVectorSize(), ui.getKmers()).processFile("./wili-2018-Small-11750-Edited.txt");
+			nn.configureNetwork();
 			nn.startTraining();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+		
+		// Create a new functions object, this holds all common functionality to a neural network
+		// such as testing, predicting and viewing the topology. This allows it to be used with any network.
+		functions = new NeuralNetworkFunctions(nn);
 		
 		// Menu
 		do {
@@ -65,20 +76,20 @@ public class CreateMenu implements Menuable {
 			switch (Integer.parseInt(option))
 			{
 				case 1:
-					nn.viewTopology();
+					functions.viewTopology();
 					break;
 				case 2:
-					nn.startTests();
+					functions.startTests();
 					break;
 				case 3:
 					ui.saveNetwork(nn);
 					break;
 				case 4:
 					// Pass in instance of NeuralNetworkable which holds network instance variable.
-					ui.predictLanguageString(nn);
+					ui.predictLanguageString(functions);
 					break;
 				case 5:
-					ui.predictLanguageFile(nn);
+					ui.predictLanguageFile(functions);
 					break;
 				case 6:
 					// Exit and return to main menu.

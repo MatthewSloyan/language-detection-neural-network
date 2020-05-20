@@ -3,8 +3,7 @@ package ie.gmit.sw.ui;
 import java.io.File;
 import java.util.Scanner;
 
-import org.encog.neural.networks.BasicNetwork;
-
+import ie.gmit.sw.nn.NeuralNetworkFunctions;
 import ie.gmit.sw.nn.NeuralNetworkable;
 import ie.gmit.sw.nn.Utilities;
 import ie.gmit.sw.processor.TestProcessor;
@@ -151,7 +150,7 @@ public class UIFunctions {
 	* @param nn instance of neural network type.
 	* @see TestProcessor
 	*/
-	public void predictLanguageString(NeuralNetworkable nn) {
+	public void predictLanguageString(NeuralNetworkFunctions functions) {
 		
 		System.out.println("Please enter paragraph or sample of language you would like to predict.");
 		String userInput = console.nextLine();
@@ -165,7 +164,7 @@ public class UIFunctions {
 			System.out.println("Error occured processing string. Please try again.");
 		}
 		
-		String prediction = nn.predict(processor.getVector());
+		String prediction = functions.predict(processor.getVector());
 	
 		System.out.println("\nThe Predicted language is: " + prediction);
 	}
@@ -182,7 +181,7 @@ public class UIFunctions {
 	* @param nn instance of neural network type.
 	* @see TestProcessor
 	*/
-	public void predictLanguageFile(NeuralNetworkable nn) {
+	public void predictLanguageFile(NeuralNetworkFunctions functions) {
 		File f;
 		boolean isValid;
 		
@@ -201,7 +200,7 @@ public class UIFunctions {
 				TestProcessor processor = new TestProcessor(vectorSize, kmers);
 				processor.processFile(predictionFilePath);
 				
-				String prediction = nn.predict(processor.getVector());
+				String prediction = functions.predict(processor.getVector());
 			
 				System.out.println("\nThe Predicted language is: " + prediction);
 			} else {

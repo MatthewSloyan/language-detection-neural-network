@@ -3,8 +3,13 @@ package ie.gmit.sw.nn;
 import java.io.File;
 import java.util.Arrays;
 
+import org.encog.ml.data.MLDataSet;
+import org.encog.ml.data.buffer.MemoryDataLoader;
+import org.encog.ml.data.buffer.codec.CSVDataCODEC;
+import org.encog.ml.data.buffer.codec.DataSetCODEC;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.persist.EncogDirectoryPersistence;
+import org.encog.util.csv.CSVFormat;
 
 public class Utilities {
 
@@ -87,5 +92,21 @@ public class Utilities {
 		   }
 		}
 		return indexOfMax;
+	}
+
+
+    /**
+     * Helper method that can be used to load in any training dataset.
+     * 
+     * @param fileName name of file.
+     * @param topology information about layers.
+     * @return trainingSet
+     */
+	public MLDataSet loadTrainingData(String fileName, Topology topology) {
+		DataSetCODEC dsc = new CSVDataCODEC(new File(fileName), CSVFormat.ENGLISH, false, topology.getInputSize(), topology.getOutputSize(), false);
+		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
+		MLDataSet trainingSet = mdl.external2Memory();
+		
+		return trainingSet;
 	}
 }
