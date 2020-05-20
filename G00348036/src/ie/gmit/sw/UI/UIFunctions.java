@@ -39,28 +39,11 @@ public class UIFunctions {
 	* @see Utilities
 	*/
 	public void saveNetwork(NeuralNetworkable nn) {
-		boolean isValid;
+		// Save Network
+		System.out.println("Please enter the name of the Neural Network file (Extension is not required).");
+		String nnFilePath = console.next();
 		
-		do {
-			System.out.println("\nWould you like to save the neural network:\n (1) Yes\n (2) No");
-			String option = console.next();
-			
-			isValid = true;
-			
-			if (Integer.parseInt(option) == 1) {
-				// Save Network
-				System.out.println("Please enter the name of the Neural Network file (Extension is not required).");
-				String nnFilePath = console.next();
-				
-				Utilities.saveNeuralNetwork(nn.getNetwork(), "./" + nnFilePath + ".nn");
-				
-				isValid = false;
-			} else if (Integer.parseInt(option) == 2) {
-				isValid = false;
-			} else {
-				System.out.println("Invalid option, please try again.");
-			} 
-		} while (isValid);
+		Utilities.saveNeuralNetwork(nn.getNetwork(), "./" + nnFilePath + ".nn");
 		
 		console.nextLine();
 	}
@@ -137,7 +120,7 @@ public class UIFunctions {
 		
 		do
 		{
-			System.out.println("\nPlease enter the vector size. (650 is recommended)");
+			System.out.println("\nPlease enter the vector size. (700 is recommended)");
             String vectorInput = console.next();
             
             isValid = true;

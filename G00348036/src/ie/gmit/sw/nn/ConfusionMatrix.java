@@ -59,10 +59,10 @@ public class ConfusionMatrix {
 		double sensitivity = truePositive * (truePositive + falseNegative);
 		double specificity = trueNegative / (trueNegative + falsePositive);
 		
-//		System.out.println("\nTP: " + truePositive);
-//		System.out.println("TN: " + trueNegative);
-//		System.out.println("FP: " + falsePositive);
-//		System.out.println("FN: " + falseNegative);
+		System.out.println("\nTP: " + truePositive);
+		System.out.println("TN: " + trueNegative);
+		System.out.println("FP: " + falsePositive);
+		System.out.println("FN: " + falseNegative);
 		
 		System.out.println("\nSensitivity (sn): " + sensitivity);
 		System.out.println("Specificity (sP): " + specificity);

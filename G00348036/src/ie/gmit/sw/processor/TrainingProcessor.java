@@ -78,7 +78,10 @@ public class TrainingProcessor implements Processable{
 			
 			if (record.length > 2) return; // Any bad lines of text.
 			
-			String text = record[0].toLowerCase();
+			// Remove all punctuation and numbers from dataset.
+			String text = record[0].replaceAll("\\p{P}", "").toLowerCase();
+			text = text.replaceAll("\\d","");
+			
 			String lang = record[1];
 			
 			// Initialise vector to 0;

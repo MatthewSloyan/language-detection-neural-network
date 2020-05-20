@@ -19,6 +19,7 @@ import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.cross.CrossValidationKFold;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.encog.neural.prune.PruneSelective;
 import org.encog.util.csv.CSVFormat;
 
 import ie.gmit.sw.processor.Language;
@@ -90,6 +91,10 @@ public class CrossValidationNeuralNetwork implements NeuralNetworkable {
 		network.getStructure().finalizeStructure();
 		network.reset();
 		
+		// Tested pruning, but increased error rate.
+		//PruneSelective p = new PruneSelective(network);
+		//p.stimulateWeakNeurons(1, 100, 50);
+		
 		//Read the CSV file "data.csv" into memory. Encog expects your CSV file to have input + output number of columns.
 		DataSetCODEC dsc = new CSVDataCODEC(new File("data.csv"), CSVFormat.ENGLISH, false, inputSize, outputSize, false);
 		MemoryDataLoader mdl = new MemoryDataLoader(dsc);
@@ -99,20 +104,18 @@ public class CrossValidationNeuralNetwork implements NeuralNetworkable {
 		MLTrain train = new ResilientPropagation(network, folded);
 		CrossValidationKFold cv = new CrossValidationKFold(train, 5);
 		
-		//PruneSelective p = new PruneSelective(network);
-		//p.prune(0, 1);
-		
 		long startTime = System.nanoTime(); 
 		
 		System.out.println("\nTraining started..\n");
 		
 		long start = System.currentTimeMillis();
-		long end = start + 160*1000;
+		long end = start + 170*1000; // 2mins 50 seconds
+
+		double minError = 0.0017;
+		int epoch = 1; //Use this to track the number of epochs
+		int maxEpochs = 5; // 5 Epochs was found to be the max accuracy achievable.
 
 		//Train the neural network
-		double minError = 0.0021;
-		int epoch = 1; //Use this to track the number of epochs
-		int maxEpochs = 6;
 		do { 
 			cv.iteration(); 
 			epoch++;
@@ -175,13 +178,13 @@ public class CrossValidationNeuralNetwork implements NeuralNetworkable {
 				correct++;
 			}
 		}
-				
-		System.out.println("Total: 	  " + total);
-		System.out.println("Correct:  " + correct);
-		System.out.println("Accuracy: " + ((correct / total) * 100) + "%");
-		
+
 		// Print out confustion matrix results. (Sensitivity and Specificity).
 		cm.printResults();
+				
+		System.out.println("\nTotal: 	  " + total);
+		System.out.println("Correct:  " + correct);
+		System.out.println("Accuracy: " + ((correct / total) * 100) + "%");
 	}
 	
 	/**
@@ -226,7 +229,7 @@ public class CrossValidationNeuralNetwork implements NeuralNetworkable {
 	
 	// Testing purposes only.
 	public static void main(String[] args) {
-		int inputs = 600;
+		int inputs = 700;
 		
 		try {
 			new TrainingProcessor(inputs, 2).processFile("./wili-2018-Small-11750-Edited.txt");

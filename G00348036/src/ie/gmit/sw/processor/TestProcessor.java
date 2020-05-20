@@ -59,7 +59,9 @@ public class TestProcessor implements Processable{
 	public void processLine(String line){
 
 		try {
-			line = line.toLowerCase();
+			// Remove all punctuation and numbers from dataset.
+			line = line.replaceAll("\\p{P}", "").toLowerCase();
+			line = line.replaceAll("\\d","");
 			
 			for (int i = 0; i < line.length() - ngramSize; i += ngramSize) {
 				CharSequence kmer = line.substring(i, i + ngramSize);
