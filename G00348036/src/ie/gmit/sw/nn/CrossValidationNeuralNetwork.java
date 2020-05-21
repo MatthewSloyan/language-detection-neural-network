@@ -12,7 +12,6 @@ import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.cross.CrossValidationKFold;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
-import ie.gmit.sw.processor.TrainingProcessor;
 
 /**
 * Main class that contains all functions for training the neural network.
@@ -127,7 +126,7 @@ public class CrossValidationNeuralNetwork implements NeuralNetworkable {
 	}
 
 	// Testing purposes only.
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		int inputs = 700;
 		
 		try {
@@ -145,5 +144,5 @@ public class CrossValidationNeuralNetwork implements NeuralNetworkable {
 		
 		NeuralNetworkFunctions nnf = new NeuralNetworkFunctions(nn);
 		nnf.startTests();
-	}
+	} */
 }

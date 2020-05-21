@@ -52,53 +52,53 @@ public class CreateMenu implements Menuable {
 			new TrainingProcessor(ui.getVectorSize(), ui.getKmers()).processFile("./wili-2018-Small-11750-Edited.txt");
 			nn.configureNetwork();
 			nn.startTraining();
+			
+			// Create a new functions object, this holds all common functionality to a neural network
+			// such as testing, predicting and viewing the topology. This allows it to be used with any network.
+			functions = new NeuralNetworkFunctions(nn);
+			
+			// Load Menu
+			do {
+				System.out.println("\nPlease select an option:\n"
+						+ "(1) View Topology Structure\n"
+						+ "(2) Run Tests & View Accuracy, Confusion Matrix, and MCC\n"
+						+ "(3) Save Network\n"
+						+ "(4) Predict Language from String Input\n"
+						+ "(5) Predict Language from File\n"
+						+ "(6) Return to main menu.");
+				String option = console.next();
+				
+				isValid = true;
+				
+				switch (Integer.parseInt(option))
+				{
+					case 1:
+						functions.viewTopology();
+						break;
+					case 2:
+						functions.startTests();
+						break;
+					case 3:
+						ui.saveNetwork(nn);
+						break;
+					case 4:
+						// Pass in instance of NeuralNetworkable which holds network instance variable.
+						ui.predictLanguageString(functions);
+						break;
+					case 5:
+						ui.predictLanguageFile(functions);
+						break;
+					case 6:
+						// Exit and return to main menu.
+						isValid = false;
+						break;
+					default:
+						System.out.println("Invalid input, please try again.");
+				} // menu selection switch
+				
+			} while (isValid);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
-		// Create a new functions object, this holds all common functionality to a neural network
-		// such as testing, predicting and viewing the topology. This allows it to be used with any network.
-		functions = new NeuralNetworkFunctions(nn);
-		
-		// Menu
-		do {
-			System.out.println("\nPlease select an option:\n"
-					+ "(1) View Topology Structure\n"
-					+ "(2) Run Tests & View Accuracy, Confusion Matrix, and MCC\n"
-					+ "(3) Save Network\n"
-					+ "(4) Predict Language from String Input\n"
-					+ "(5) Predict Language from File\n"
-					+ "(6) Return to main menu.");
-			String option = console.next();
-			
-			isValid = true;
-			
-			switch (Integer.parseInt(option))
-			{
-				case 1:
-					functions.viewTopology();
-					break;
-				case 2:
-					functions.startTests();
-					break;
-				case 3:
-					ui.saveNetwork(nn);
-					break;
-				case 4:
-					// Pass in instance of NeuralNetworkable which holds network instance variable.
-					ui.predictLanguageString(functions);
-					break;
-				case 5:
-					ui.predictLanguageFile(functions);
-					break;
-				case 6:
-					// Exit and return to main menu.
-					isValid = false;
-					break;
-				default:
-					System.out.println("Invalid input, please try again.");
-			} // menu selection switch
-			
-		} while (isValid);
 	}
 }

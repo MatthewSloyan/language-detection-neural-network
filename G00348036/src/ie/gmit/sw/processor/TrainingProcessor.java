@@ -87,9 +87,10 @@ public class TrainingProcessor implements Processable{
 			// Initialize vector to 0;
 			for (int i = 0; i < vector.length; i++) vector[i] = 0;
 			
+			// Get the ngrams and hash to vector.
 			for (int i = 0; i < text.length() - ngramSize; i += ngramSize) {
-				CharSequence kmer = text.substring(i, i + ngramSize);
-				int index = kmer.hashCode() % vector.length;
+				CharSequence ngram = text.substring(i, i + ngramSize);
+				int index = ngram.hashCode() % vector.length;
 				vector[index]++;
 			}
 			

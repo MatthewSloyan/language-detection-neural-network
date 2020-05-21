@@ -102,7 +102,7 @@ public class UIFunctions {
                 	isValid = false;
                 }
 			} catch (Exception e) {
-				System.out.println("Input must be numbers. Please try again.\n");
+				System.out.println("Input must be numbers. Please try again.");
 			}
 		} while (isValid);
 		
@@ -119,7 +119,7 @@ public class UIFunctions {
 		
 		do
 		{
-			System.out.println("\nPlease enter the vector size. (700 is recommended)");
+			System.out.println("\nPlease enter the vector size between 100 and 2000. (700 is recommended)");
             String vectorInput = console.next();
             
             isValid = true;
@@ -133,7 +133,7 @@ public class UIFunctions {
                 	isValid = false;
                 }
 			} catch (Exception e) {
-				System.out.println("Input must be numbers. Please try again.\n");
+				System.out.println("Input must be numbers. Please try again.");
 			}
 		} while (isValid);
 	
@@ -186,7 +186,7 @@ public class UIFunctions {
 		boolean isValid;
 		
 		do {
-			System.out.println("Please enter path to text file for prediction.");
+			System.out.println("Please enter path to text file for prediction. E.g. Test.txt if in the same folder.");
 			String predictionFilePath = console.next();
 
 			f = new File(predictionFilePath);
