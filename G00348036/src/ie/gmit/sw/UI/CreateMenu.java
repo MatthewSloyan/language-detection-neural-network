@@ -64,7 +64,7 @@ public class CreateMenu implements Menuable {
 		do {
 			System.out.println("\nPlease select an option:\n"
 					+ "(1) View Topology Structure\n"
-					+ "(2) View Accuracy, Confusion Matrix & Run Tests\n"
+					+ "(2) Run Tests & View Accuracy, Confusion Matrix, and MCC\n"
 					+ "(3) Save Network\n"
 					+ "(4) Predict Language from String Input\n"
 					+ "(5) Predict Language from File\n"

@@ -59,7 +59,7 @@ public class MainMenu implements Menuable {
 	*/
 	private void viewRecommendations() {
 		System.out.println("\n==== Recommendations ==== \n");
-		System.out.println("Ngram Size: 2  |  Vector Size: 700  |  Training time: 95 seconds  |  Accuracy: 85%");
+		System.out.println("Ngram Size: 2  |  Vector Size: 700  |  Training time: 95 seconds  |  Accuracy: 85%   |  Error Rate: 0.0015 after 4 epochs");
 		
 		System.out.println("\nPlease Note: Training time and accuracy can vary between machine. Tests completed on a 7th Gen I7");
 	}

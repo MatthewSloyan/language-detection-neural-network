@@ -71,7 +71,7 @@ public class UIFunctions {
 			
 				nn.setNetwork(Utilities.loadNeuralNetwork(nnFilePath));
 			} else {
-				System.out.println("File does not exist, please try again.");
+				System.out.println("File does not exist, please try again.\n");
 			}
 		} while (isValid);
 		
@@ -102,7 +102,7 @@ public class UIFunctions {
                 	isValid = false;
                 }
 			} catch (Exception e) {
-				System.out.println("Input must be numbers. Please try again.");
+				System.out.println("Input must be numbers. Please try again.\n");
 			}
 		} while (isValid);
 		
@@ -133,7 +133,7 @@ public class UIFunctions {
                 	isValid = false;
                 }
 			} catch (Exception e) {
-				System.out.println("Input must be numbers. Please try again.");
+				System.out.println("Input must be numbers. Please try again.\n");
 			}
 		} while (isValid);
 	
@@ -161,7 +161,7 @@ public class UIFunctions {
 		try {
 			processor.processLine(userInput);
 		} catch (Exception e) {
-			System.out.println("Error occured processing string. Please try again.");
+			System.out.println("Error occured processing string. Please try again.\n");
 		}
 		
 		String prediction = functions.predict(processor.getVector());
@@ -204,7 +204,7 @@ public class UIFunctions {
 			
 				System.out.println("\nThe Predicted language is: " + prediction);
 			} else {
-				System.out.println("File does not exist, please try again.");
+				System.out.println("File does not exist, please try again.\n");
 			}
 		} while (isValid);
 		

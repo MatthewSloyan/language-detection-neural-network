@@ -60,10 +60,12 @@ public class ConfusionMatrix {
 	/**
 	* Method to print out sensitivity (sn) = TP (TP + FN) and 
 	* specificity (sP) = TN / (TN + FP)
+	* Also calculate accuracy based on these values.
 	*/
 	public void printResults() {
 		double sensitivity = truePositive * (truePositive + falseNegative);
 		double specificity = trueNegative / (trueNegative + falsePositive);
+		double accuracy = (truePositive + trueNegative) / (truePositive + trueNegative + falsePositive + falseNegative);
 		
 		System.out.println("TP: " + truePositive);
 		System.out.println("TN: " + trueNegative);
@@ -72,5 +74,21 @@ public class ConfusionMatrix {
 		
 		System.out.println("\nSensitivity (sn): " + sensitivity);
 		System.out.println("Specificity (sP): " + specificity);
+		
+		// Accuracy on average is 0.99 which I think it good.
+		System.out.println("\nAccuracy from confusion matrix: " + accuracy);
+	}
+	
+	/**
+	 * Calculate Matthew's Correlation Coefficient
+	 * If the result is -1 then the binary classifier is wrong, but if it +1 it is completely correct. 
+	 */
+	public void calculateMCC() {
+		double topline = (truePositive * trueNegative) - (falsePositive * falseNegative);
+		double bottomline = Math.sqrt((truePositive + falsePositive) * (truePositive + falseNegative) 
+				* (trueNegative + falsePositive) * (trueNegative + falseNegative));
+		
+		double mcc = topline / bottomline;
+		System.out.println("Matthew's Correlation Coefficient: " + mcc);
 	}
 }

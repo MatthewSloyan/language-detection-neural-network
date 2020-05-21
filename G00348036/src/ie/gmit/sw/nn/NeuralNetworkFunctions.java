@@ -81,7 +81,9 @@ public class NeuralNetworkFunctions {
 		}
 
 		// Print out confusion matrix results. (Sensitivity and Specificity).
+		// Also calculate and print out Matthew's Correlation Coefficient.
 		cm.printResults();
+		cm.calculateMCC();
 				
 		System.out.println("\nTotal: 	  " + total);
 		System.out.println("Correct:  " + correct);
